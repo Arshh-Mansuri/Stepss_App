@@ -4,8 +4,11 @@ import Foundation
 // the App Group container without hopping to the main actor.
 nonisolated enum AppGroup {
     // Matches the value provisioned in StepLock.entitlements / StepLockShield.entitlements.
-    // Per architecture doc §3 — shared by the main app and all extensions.
-    static let identifier = "group.com.steplock.shared"
+    // Spec calls for "group.com.steplock.shared" but that string isn't registered
+    // to this team's developer portal — using the original "group.uts.StepLock"
+    // which is provisioned. We can rename to the spec value once the App Group
+    // is registered with Apple (paid account + portal entry).
+    static let identifier = "group.uts.StepLock"
 
     static var containerURL: URL {
         guard let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: identifier) else {

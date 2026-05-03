@@ -2,8 +2,8 @@ import Foundation
 
 enum AppGroup {
     // Matches the value provisioned in StepLock.entitlements / StepLockShield.entitlements.
-    // Will become "group.com.stridetime.shared" on the StrideTime rename.
-    static let identifier = "group.uts.StepLock"
+    // Per architecture doc §3 — shared by the main app and all extensions.
+    static let identifier = "group.com.steplock.shared"
 
     static var containerURL: URL {
         guard let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: identifier) else {

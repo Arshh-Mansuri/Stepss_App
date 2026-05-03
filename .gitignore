@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Xcode — per-user state
+**/xcuserdata/
+**/*.xcuserstate
+
+# Swift Package Manager
+.build/
+Packages/
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved.lock
+
+# Build output
+DerivedData/
+build/

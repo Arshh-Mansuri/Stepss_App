@@ -6,7 +6,7 @@ struct RootView: View {
     var body: some View {
         ZStack {
             if onboarding.hasCompleted {
-                ContentView()
+                MainTabView()
                     .transition(.opacity.combined(with: .scale(scale: 1.02)))
             } else {
                 OnboardingFlow {

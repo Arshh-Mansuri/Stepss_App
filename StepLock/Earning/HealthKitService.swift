@@ -58,6 +58,18 @@ actor HealthKitService {
         log.error("HKObserverQuery error: \(error.localizedDescription, privacy: .public)")
     }
 
+    /// Returns the cumulative step count for the current local day (midnight → now).
+    /// Caller is responsible for triggering re-reads on relevant signals
+    /// (foreground, observer-query callback, manual refresh).
+    func todayStepCount() async throws -> Int {
+        let now = Date()
+        let startOfDay = Calendar.current.startOfDay(for: now)
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictStartDate)
+        let stats = try await fetchStatistics(predicate: predicate)
+        let count = stats.sumQuantity()?.doubleValue(for: .count()) ?? 0
+        return Int(count.rounded())
+    }
+
     private func handleStepUpdate() async {
         let now = Date()
         let anchor = lastSyncDate() ?? Calendar.current.startOfDay(for: now)

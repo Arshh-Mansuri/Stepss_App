@@ -24,10 +24,9 @@ actor HealthKitService {
             throw HealthKitServiceError.notAvailableOnDevice
         }
         try await store.requestAuthorization(toShare: [], read: [HealthKitConfig.stepType])
-        // HealthKit never reports "denied" for read access by design — the only signal is
-        // queries returning zero data. We log status here for visibility.
-        let status = store.authorizationStatus(for: HealthKitConfig.stepType)
-        log.info("HK auth status after request: \(status.rawValue, privacy: .public)")
+        // Note: authorizationStatus(for:) reflects WRITE permission only. Read access is
+        // intentionally hidden by Apple — we'll know it's denied if step queries return empty.
+        log.info("HK authorization request completed")
     }
 
     func start() async throws {
@@ -59,13 +58,14 @@ actor HealthKitService {
     }
 
     /// Returns the cumulative step count for the current local day (midnight → now).
-    /// Caller is responsible for triggering re-reads on relevant signals
-    /// (foreground, observer-query callback, manual refresh).
+    /// Returns 0 when the user has no step samples for today (a normal state on
+    /// simulators or for users who haven't moved). Caller is responsible for
+    /// triggering re-reads on relevant signals (foreground, observer callback, refresh).
     func todayStepCount() async throws -> Int {
         let now = Date()
         let startOfDay = Calendar.current.startOfDay(for: now)
         let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictStartDate)
-        let stats = try await fetchStatistics(predicate: predicate)
+        guard let stats = try await fetchStatistics(predicate: predicate) else { return 0 }
         let count = stats.sumQuantity()?.doubleValue(for: .count()) ?? 0
         return Int(count.rounded())
     }
@@ -80,7 +80,7 @@ actor HealthKitService {
         }
 
         let predicate = HKQuery.predicateForSamples(withStart: anchor, end: now, options: .strictStartDate)
-        let stats: HKStatistics
+        let stats: HKStatistics?
         do {
             stats = try await fetchStatistics(predicate: predicate)
         } catch {
@@ -88,7 +88,7 @@ actor HealthKitService {
             return
         }
 
-        let stepCount = stats.sumQuantity()?.doubleValue(for: .count()) ?? 0
+        let stepCount = stats?.sumQuantity()?.doubleValue(for: .count()) ?? 0
         let delta = Int(stepCount.rounded())
 
         if delta > 0 {
@@ -97,19 +97,25 @@ actor HealthKitService {
         setLastSyncDate(now)
     }
 
-    private func fetchStatistics(predicate: NSPredicate) async throws -> HKStatistics {
+    /// Returns nil when HealthKit reports `errorNoData` — i.e., the predicate matches
+    /// zero samples. Callers treat nil as "no steps in this range" rather than a failure.
+    private func fetchStatistics(predicate: NSPredicate) async throws -> HKStatistics? {
         try await withCheckedThrowingContinuation { continuation in
             let query = HKStatisticsQuery(
                 quantityType: HealthKitConfig.stepType,
                 quantitySamplePredicate: predicate,
                 options: .cumulativeSum
             ) { _, statistics, error in
+                if let nsError = error as NSError?,
+                   nsError.domain == HKError.errorDomain,
+                   nsError.code == HKError.errorNoData.rawValue {
+                    continuation.resume(returning: nil)
+                    return
+                }
                 if let error {
                     continuation.resume(throwing: error)
-                } else if let statistics {
-                    continuation.resume(returning: statistics)
                 } else {
-                    continuation.resume(throwing: HealthKitServiceError.notAvailableOnDevice)
+                    continuation.resume(returning: statistics)
                 }
             }
             store.execute(query)

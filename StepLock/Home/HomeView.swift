@@ -51,6 +51,13 @@ struct HomeView: View {
                 infoCard
                     .padding(.top, 8)
 
+                #if targetEnvironment(simulator)
+                if steps == 0 && !isLoading {
+                    simulatorHint
+                        .padding(.top, 12)
+                }
+                #endif
+
                 Spacer(minLength: 16)
 
                 Button {
@@ -90,6 +97,27 @@ struct HomeView: View {
         .refreshable {
             await refreshSteps()
         }
+    }
+
+    private var simulatorHint: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "info.circle.fill")
+                .font(.system(size: 14))
+                .foregroundStyle(DS.Color.gray400)
+                .padding(.top, 1)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("No steps yet")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(DS.Color.gray800)
+                Text("Open the simulator's Health app → Browse → Steps → Add Data, then pull-to-refresh here.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(DS.Color.gray400)
+                    .lineSpacing(2)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(12)
+        .background(DS.Color.gray50, in: RoundedRectangle(cornerRadius: DS.Radius.r12, style: .continuous))
     }
 
     private var infoCard: some View {

@@ -43,14 +43,23 @@ struct OnboardingAppPickerView: View {
                 }
                 .scaleEffect(swirl ? 1.04 : 1.0)
 
-                if shieldManager.selection.applicationTokens.count + shieldManager.selection.categoryTokens.count > 0 {
+                if hasSelection {
                     selectedBadge
                         .transition(.scale.combined(with: .opacity))
                 } else {
-                    Text("iOS renders each app's\nreal icon & name here")
-                        .font(.system(size: 12))
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(DS.Color.gray400)
+                    VStack(spacing: 6) {
+                        Text("iOS renders each app's\nreal icon & name here")
+                            .font(.system(size: 12))
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(DS.Color.gray400)
+                        #if targetEnvironment(simulator)
+                        Text("On simulator only categories appear — pick one to continue.")
+                            .font(.system(size: 11, weight: .semibold))
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(DS.Color.purple600)
+                            .padding(.top, 4)
+                        #endif
+                    }
                 }
             }
             .frame(maxWidth: .infinity)
@@ -80,9 +89,13 @@ struct OnboardingAppPickerView: View {
             VStack(spacing: 4) {
                 Button {
                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                    isPickerPresented = true
+                    if hasSelection {
+                        onFinish()
+                    } else {
+                        isPickerPresented = true
+                    }
                 } label: {
-                    Text(hasSelection ? "Done — finish setup" : "Open app picker")
+                    Text(hasSelection ? "Finish setup" : "Open app picker")
                 }
                 .buttonStyle(DSPrimaryButtonStyle())
                 .familyActivityPicker(isPresented: $isPickerPresented, selection: $shieldManager.selection)
@@ -92,11 +105,19 @@ struct OnboardingAppPickerView: View {
                     }
                 }
 
-                Button(hasSelection ? "Continue" : "Skip — set up later") {
-                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                    onFinish()
+                if hasSelection {
+                    Button("Edit selection") {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        isPickerPresented = true
+                    }
+                    .buttonStyle(DSGhostButtonStyle())
+                } else {
+                    Button("Skip — set up later") {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        onFinish()
+                    }
+                    .buttonStyle(DSGhostButtonStyle())
                 }
-                .buttonStyle(DSGhostButtonStyle())
             }
             .padding(.bottom, 8)
             .opacity(appeared ? 1 : 0)

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct OnboardingFlow: View {
-    @State private var state = OnboardingState()
+    @State private var state = OnboardingState.shared
     let onComplete: () -> Void
 
     var body: some View {

@@ -28,15 +28,10 @@ struct MainTabView: View {
                 Label("History", systemImage: "clock.arrow.circlepath")
             }
 
-            PlaceholderTab(
-                title: "Settings",
-                subtitle: "Aditya — coming next",
-                symbol: "gearshape.fill",
-                tint: DS.Color.gray600
-            )
-            .tabItem {
-                Label("Settings", systemImage: "gearshape.fill")
-            }
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape.fill")
+                }
         }
         .tint(DS.Color.purple600)
     }

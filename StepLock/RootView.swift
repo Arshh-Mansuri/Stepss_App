@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct RootView: View {
-    @State private var onboarding = OnboardingState()
+    @State private var onboarding = OnboardingState.shared
 
     var body: some View {
         ZStack {

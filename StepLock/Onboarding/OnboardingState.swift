@@ -7,6 +7,8 @@ enum OnboardingDefaultsKey {
 
 @Observable
 final class OnboardingState {
+    static let shared = OnboardingState()
+
     var currentStep: Int = 0
     var hasCompleted: Bool
 

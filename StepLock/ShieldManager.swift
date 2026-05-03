@@ -19,20 +19,21 @@ class ShieldManager {
         }
     }
     
-    // This is the function that actually turns the "lock" on or off
+    // Apply (or remove) the shield based on what's currently selected.
+    // Apps and categories are applied independently — picking one app should
+    // NOT shield every other app on the device.
     func applyShield() {
-        // Convert the selection into tokens the system understands
         let applications = selection.applicationTokens
         let categories = selection.categoryTokens
-        
-        // If the user hasn't selected anything, set everything to nil (Unlock)
-        // If they have selected apps, apply the shield to those apps
-        if applications.isEmpty && categories.isEmpty {
-            store.shield.applications = nil
-            store.shield.applicationCategories = nil
-        } else {
-            store.shield.applications = applications
-            store.shield.applicationCategories = .all(except: [])
-        }
+
+        // Apps: shield only the specific tokens the user picked.
+        store.shield.applications = applications.isEmpty ? nil : applications
+
+        // Categories: shield only the specific categories the user picked.
+        // .all(except:) means "shield every category" — only use it if the
+        // user actually selected the top-level "All Apps and Categories" row.
+        store.shield.applicationCategories = categories.isEmpty
+            ? nil
+            : ShieldSettings.ActivityCategoryPolicy.specific(categories)
     }
 }

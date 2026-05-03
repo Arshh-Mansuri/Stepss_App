@@ -39,13 +39,6 @@ final class UnlockStore {
         ShieldManager.shared.applyShield()
     }
 
-    /// If the active session has expired, drop it and re-apply the full shield.
-    /// Safe to call frequently (foreground, scenePhase, timer).
-    func checkExpiry() {
-        guard let session = activeSession, !session.isActive else { return }
-        // Ah, guard backwards — fix:
-    }
-
     /// Returns true if an unlock just expired and was cleared.
     @discardableResult
     func reapIfExpired() -> Bool {
@@ -59,7 +52,13 @@ final class UnlockStore {
     /// Token of the currently-unlocked app (if any). ShieldManager uses this
     /// to exempt that app from the shield via .except.
     var activeApplicationToken: ApplicationToken? {
-        activeSession?.token
+        activeSession?.applicationToken
+    }
+
+    /// Token of the currently-unlocked category (if any). ShieldManager uses this
+    /// to drop the whole category from the shield while the unlock is active.
+    var activeCategoryToken: ActivityCategoryToken? {
+        activeSession?.categoryToken
     }
 
     // MARK: - Persistence

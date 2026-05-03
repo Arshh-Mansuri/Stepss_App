@@ -45,6 +45,7 @@ final class LedgerStore {
             occurredAt: session.startsAt,
             pointsSpent: session.pointsSpent,
             durationMinutes: session.durationMinutes,
+            kind: session.kind,
             tokenData: session.tokenData
         )
         append(.spend(payload))

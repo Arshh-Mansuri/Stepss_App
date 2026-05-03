@@ -150,12 +150,7 @@ struct HistoryView: View {
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(DS.Color.gray900)
                 }
-                if let token = decodeToken(p.tokenData) {
-                    Label(token)
-                        .labelStyle(.titleOnly)
-                        .font(.system(size: 11))
-                        .foregroundStyle(DS.Color.gray400)
-                }
+                spendTargetLabel(p)
                 Text(relativeTime(p.occurredAt))
                     .font(.system(size: 11))
                     .foregroundStyle(DS.Color.gray400)
@@ -167,6 +162,26 @@ struct HistoryView: View {
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 14)
+    }
+
+    @ViewBuilder
+    private func spendTargetLabel(_ p: LedgerEntry.SpendPayload) -> some View {
+        switch p.kind {
+        case .application:
+            if let token = try? PropertyListDecoder().decode(ApplicationToken.self, from: p.tokenData) {
+                Label(token)
+                    .labelStyle(.titleOnly)
+                    .font(.system(size: 11))
+                    .foregroundStyle(DS.Color.gray400)
+            }
+        case .category:
+            if let token = try? PropertyListDecoder().decode(ActivityCategoryToken.self, from: p.tokenData) {
+                Label(token)
+                    .labelStyle(.titleOnly)
+                    .font(.system(size: 11))
+                    .foregroundStyle(DS.Color.gray400)
+            }
+        }
     }
 
     private func iconBubble(symbol: String, bg: Color, fg: Color) -> some View {
@@ -238,10 +253,6 @@ struct HistoryView: View {
     }
 
     // MARK: - Helpers
-
-    private func decodeToken(_ data: Data) -> ApplicationToken? {
-        try? PropertyListDecoder().decode(ApplicationToken.self, from: data)
-    }
 
     private func relativeTime(_ date: Date) -> String {
         let formatter = RelativeDateTimeFormatter()

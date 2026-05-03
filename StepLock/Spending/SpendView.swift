@@ -3,12 +3,19 @@ import Combine
 import FamilyControls
 import ManagedSettings
 
+/// Either an app or a category — both are pickable from FamilyActivityPicker
+/// and both can be the target of a Spend window.
+enum SpendTarget: Hashable {
+    case application(ApplicationToken)
+    case category(ActivityCategoryToken)
+}
+
 struct SpendView: View {
     @State private var shieldManager = ShieldManager.shared
     @State private var wallet = WalletStore.shared
     @State private var unlockStore = UnlockStore.shared
 
-    @State private var selectedToken: ApplicationToken?
+    @State private var selectedTarget: SpendTarget?
     @State private var selectedTier: PricingEngine.Tier?
     @State private var isSpending = false
     @State private var errorText: String?
@@ -29,11 +36,11 @@ struct SpendView: View {
                     balanceCard
                         .padding(.top, 12)
 
-                    if shieldManager.selection.applicationTokens.isEmpty {
+                    if !hasAnyGatedSelection {
                         emptyState
                             .padding(.top, 32)
                     } else {
-                        sectionLabel("Step 1 — App")
+                        sectionLabel("Step 1 — App or category")
                         appPicker
                             .padding(.top, 6)
 
@@ -120,23 +127,45 @@ struct SpendView: View {
     private var appPicker: some View {
         VStack(spacing: 4) {
             ForEach(Array(shieldManager.selection.applicationTokens), id: \.self) { token in
+                let target: SpendTarget = .application(token)
                 Button {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                    selectedToken = token
+                    selectedTarget = target
                 } label: {
-                    appRow(token: token, isSelected: selectedToken == token)
+                    targetRow(label: AnyView(Label(token).labelStyle(.titleAndIcon)),
+                              hint: nil,
+                              isSelected: selectedTarget == target)
+                }
+                .buttonStyle(.plain)
+            }
+
+            ForEach(Array(shieldManager.selection.categoryTokens), id: \.self) { token in
+                let target: SpendTarget = .category(token)
+                Button {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    selectedTarget = target
+                } label: {
+                    targetRow(label: AnyView(Label(token).labelStyle(.titleAndIcon)),
+                              hint: "Category — unlocks all apps in it",
+                              isSelected: selectedTarget == target)
                 }
                 .buttonStyle(.plain)
             }
         }
     }
 
-    private func appRow(token: ApplicationToken, isSelected: Bool) -> some View {
+    private func targetRow(label: AnyView, hint: String?, isSelected: Bool) -> some View {
         HStack(spacing: 10) {
-            Label(token)
-                .labelStyle(.titleAndIcon)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(DS.Color.gray900)
+            VStack(alignment: .leading, spacing: 2) {
+                label
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(DS.Color.gray900)
+                if let hint {
+                    Text(hint)
+                        .font(.system(size: 10))
+                        .foregroundStyle(DS.Color.gray400)
+                }
+            }
 
             Spacer()
 
@@ -159,6 +188,11 @@ struct SpendView: View {
             isSelected ? DS.Color.purple50 : DS.Color.gray50,
             in: RoundedRectangle(cornerRadius: DS.Radius.r10, style: .continuous)
         )
+    }
+
+    private var hasAnyGatedSelection: Bool {
+        !shieldManager.selection.applicationTokens.isEmpty
+            || !shieldManager.selection.categoryTokens.isEmpty
     }
 
     private var durationTiers: some View {
@@ -255,13 +289,13 @@ struct SpendView: View {
 
     private var spendButtonLabel: String {
         guard let tier = selectedTier else {
-            return selectedToken == nil ? "Pick an app" : "Pick a duration"
+            return selectedTarget == nil ? "Pick an app or category" : "Pick a duration"
         }
         return "Unlock \(tier.title) for \(tier.pointsCost.formatted()) pts"
     }
 
     private var canSpend: Bool {
-        guard let tier = selectedTier, selectedToken != nil else { return false }
+        guard let tier = selectedTier, selectedTarget != nil else { return false }
         guard unlockStore.activeSession == nil else { return false }
         return wallet.balance >= tier.pointsCost
     }
@@ -307,25 +341,34 @@ struct SpendView: View {
     // MARK: - Actions
 
     private func performSpend() {
-        guard let token = selectedToken, let tier = selectedTier else { return }
+        guard let target = selectedTarget, let tier = selectedTier else { return }
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         isSpending = true
         errorText = nil
 
         do {
             try wallet.debit(points: tier.pointsCost)
-            let session = try UnlockSession.make(
-                token: token,
-                pointsSpent: tier.pointsCost,
-                durationMinutes: tier.durationMinutes
-            )
+            let session: UnlockSession
+            switch target {
+            case .application(let token):
+                session = try UnlockSession.make(
+                    applicationToken: token,
+                    pointsSpent: tier.pointsCost,
+                    durationMinutes: tier.durationMinutes
+                )
+            case .category(let token):
+                session = try UnlockSession.make(
+                    categoryToken: token,
+                    pointsSpent: tier.pointsCost,
+                    durationMinutes: tier.durationMinutes
+                )
+            }
             unlockStore.start(session)
             LedgerStore.shared.recordSpend(session: session)
             UINotificationFeedbackGenerator().notificationOccurred(.success)
             selectedTier = nil
-            selectedToken = nil
+            selectedTarget = nil
         } catch {
-            // Re-credit on failure (no Phase 2 yet, so this is the only failure mode).
             errorText = error.localizedDescription
             UINotificationFeedbackGenerator().notificationOccurred(.error)
         }

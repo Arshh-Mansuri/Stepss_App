@@ -26,16 +26,26 @@ class ShieldManager {
         let applications = selection.applicationTokens
         let categories = selection.categoryTokens
 
-        let exemptions: Set<ApplicationToken> = {
+        // App-level exemption: drop one app token from the shielded set.
+        let appExemptions: Set<ApplicationToken> = {
             guard let token = UnlockStore.shared.activeApplicationToken else { return [] }
             return [token]
         }()
 
-        let shieldedApps = applications.subtracting(exemptions)
+        // Category-level exemption: drop the unlocked category from the shielded
+        // set entirely. ManagedSettings doesn't let us partially exempt a
+        // category, so a category unlock means "the whole category is open".
+        let categoryExemptions: Set<ActivityCategoryToken> = {
+            guard let token = UnlockStore.shared.activeCategoryToken else { return [] }
+            return [token]
+        }()
+
+        let shieldedApps = applications.subtracting(appExemptions)
         store.shield.applications = shieldedApps.isEmpty ? nil : shieldedApps
 
-        store.shield.applicationCategories = categories.isEmpty
+        let shieldedCategories = categories.subtracting(categoryExemptions)
+        store.shield.applicationCategories = shieldedCategories.isEmpty
             ? nil
-            : ShieldSettings.ActivityCategoryPolicy.specific(categories, except: exemptions)
+            : ShieldSettings.ActivityCategoryPolicy.specific(shieldedCategories, except: appExemptions)
     }
 }

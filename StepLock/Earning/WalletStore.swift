@@ -41,9 +41,12 @@ final class WalletStore {
     }
 
     /// Set the balance back to zero. Used by the dev "Reset balance" row.
+    /// Also clears LedgerStore so the History tab and balance stay in sync —
+    /// otherwise you'd see "balance 0" with leftover earn rows from yesterday.
     func reset() {
         balance = 0
         defaults.set(0, forKey: balanceKey)
+        LedgerStore.shared.reset()
     }
 }
 

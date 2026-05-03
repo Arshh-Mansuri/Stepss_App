@@ -13,15 +13,10 @@ struct MainTabView: View {
                     Label("Spend", systemImage: "bolt.circle.fill")
                 }
 
-            PlaceholderTab(
-                title: "History",
-                subtitle: "Arsh — pending ledger",
-                symbol: "clock.arrow.circlepath",
-                tint: DS.Color.teal400
-            )
-            .tabItem {
-                Label("History", systemImage: "clock.arrow.circlepath")
-            }
+            HistoryView()
+                .tabItem {
+                    Label("History", systemImage: "clock.arrow.circlepath")
+                }
 
             SettingsView()
                 .tabItem {

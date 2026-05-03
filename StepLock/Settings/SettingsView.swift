@@ -21,7 +21,7 @@ struct SettingsView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    sectionHeader("Connections")
+                    connectionsHeader
                     connectionsCard
 
                     sectionHeader("Earning")
@@ -98,6 +98,33 @@ struct SettingsView: View {
             .padding(.bottom, 6)
     }
 
+    private var connectionsHeader: some View {
+        HStack(spacing: 8) {
+            Text("CONNECTIONS")
+                .font(.system(size: 11, weight: .bold))
+                .tracking(0.6)
+                .foregroundStyle(DS.Color.gray400)
+
+            Spacer()
+
+            Button {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                Task { await refreshAll() }
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.system(size: 11, weight: .bold))
+                    Text("Refresh")
+                        .font(.system(size: 11, weight: .semibold))
+                }
+                .foregroundStyle(DS.Color.purple600)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.top, 18)
+        .padding(.bottom, 6)
+    }
+
     private var connectionsCard: some View {
         VStack(spacing: 0) {
             ConnectionStatusRow(
@@ -117,16 +144,6 @@ struct SettingsView: View {
             )
         }
         .background(DS.Color.gray50, in: RoundedRectangle(cornerRadius: DS.Radius.r12, style: .continuous))
-        .overlay(alignment: .topTrailing) {
-            Button {
-                Task { await refreshAll() }
-            } label: {
-                Image(systemName: "arrow.clockwise")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(DS.Color.purple600)
-                    .padding(8)
-            }
-        }
     }
 
     private var earningCard: some View {

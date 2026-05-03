@@ -320,6 +320,7 @@ struct SpendView: View {
                 durationMinutes: tier.durationMinutes
             )
             unlockStore.start(session)
+            LedgerStore.shared.recordSpend(session: session)
             UINotificationFeedbackGenerator().notificationOccurred(.success)
             selectedTier = nil
             selectedToken = nil

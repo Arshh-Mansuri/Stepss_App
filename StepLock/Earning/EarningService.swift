@@ -27,10 +27,16 @@ actor EarningService {
 
         log.info("Earned \(points, privacy: .public) pts from \(stepDelta, privacy: .public) steps (rate 1 pt / \(stepsPerPoint, privacy: .public) steps) at \(occurredAt, privacy: .public)")
 
-        // TODO(arsh-followup): swap WalletStore.credit for Aditya's
-        // SpendingLedger.earn(points:metadata:) once it's published.
+        // TODO(arsh-followup): swap WalletStore.credit + LedgerStore.recordEarn
+        // for Aditya's SpendingLedger.earn(points:metadata:) once it's published.
         await MainActor.run {
             WalletStore.shared.credit(points: points)
+            LedgerStore.shared.recordEarn(
+                stepDelta: stepDelta,
+                pointsEarned: points,
+                stepsPerPoint: stepsPerPoint,
+                occurredAt: occurredAt
+            )
         }
     }
 }

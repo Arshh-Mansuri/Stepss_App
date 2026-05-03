@@ -57,6 +57,57 @@ actor HealthKitService {
         log.error("HKObserverQuery error: \(error.localizedDescription, privacy: .public)")
     }
 
+    /// Returns daily step counts for the last `daysBack` complete days (not including today).
+    /// Returned dictionary is keyed by the start-of-day Date for each bucket. Days with no
+    /// samples are still present in the result with a value of 0.
+    func dailyStepHistory(daysBack: Int) async throws -> [Date: Int] {
+        precondition(daysBack > 0, "daysBack must be positive")
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: Date())
+        guard let startDate = calendar.date(byAdding: .day, value: -daysBack, to: startOfToday) else {
+            return [:]
+        }
+
+        var interval = DateComponents()
+        interval.day = 1
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let predicate = HKQuery.predicateForSamples(withStart: startDate, end: startOfToday, options: .strictStartDate)
+            let query = HKStatisticsCollectionQuery(
+                quantityType: HealthKitConfig.stepType,
+                quantitySamplePredicate: predicate,
+                options: .cumulativeSum,
+                anchorDate: startDate,
+                intervalComponents: interval
+            )
+
+            query.initialResultsHandler = { _, results, error in
+                if let nsError = error as NSError?,
+                   nsError.domain == HKError.errorDomain,
+                   nsError.code == HKError.errorNoData.rawValue {
+                    continuation.resume(returning: [:])
+                    return
+                }
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let results else {
+                    continuation.resume(returning: [:])
+                    return
+                }
+                var output: [Date: Int] = [:]
+                results.enumerateStatistics(from: startDate, to: startOfToday) { stats, _ in
+                    let count = Int((stats.sumQuantity()?.doubleValue(for: .count()) ?? 0).rounded())
+                    output[stats.startDate] = count
+                }
+                continuation.resume(returning: output)
+            }
+
+            store.execute(query)
+        }
+    }
+
     /// Returns the cumulative step count for the current local day (midnight → now).
     /// Returns 0 when the user has no step samples for today (a normal state on
     /// simulators or for users who haven't moved). Caller is responsible for

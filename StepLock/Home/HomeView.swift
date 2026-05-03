@@ -4,10 +4,9 @@ struct HomeView: View {
     @State private var steps: Int = 0
     @State private var isLoading: Bool = true
     @State private var errorText: String?
+    @State private var dailyGoal: Int = HealthKitConfig.defaultDailyStepGoal
 
     @Environment(\.scenePhase) private var scenePhase
-
-    private let dailyGoal = 10_000
 
     var body: some View {
         ScrollView {
@@ -87,14 +86,17 @@ struct HomeView: View {
         }
         .background(DS.Color.gray0)
         .task {
+            reloadGoal()
             await refreshSteps()
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
+                reloadGoal()
                 Task { await refreshSteps() }
             }
         }
         .refreshable {
+            reloadGoal()
             await refreshSteps()
         }
     }
@@ -159,6 +161,16 @@ struct HomeView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
         .background(DS.Color.gray50, in: RoundedRectangle(cornerRadius: DS.Radius.r12, style: .continuous))
+    }
+
+    private func reloadGoal() {
+        let stored = AppGroup.sharedDefaults.integer(forKey: HealthKitConfig.DefaultsKey.dailyStepGoal)
+        let resolved = stored > 0 ? stored : HealthKitConfig.defaultDailyStepGoal
+        if resolved != dailyGoal {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
+                dailyGoal = resolved
+            }
+        }
     }
 
     private func refreshSteps() async {

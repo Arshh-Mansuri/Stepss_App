@@ -10,6 +10,8 @@ struct SettingsView: View {
     @State private var screenTimeState: ConnectionState = .checking
     @State private var isPickerPresented = false
     @State private var showResetConfirm = false
+    @State private var showGoalSheet = false
+    @State private var dailyGoal: Int = HealthKitConfig.defaultDailyStepGoal
 
     var body: some View {
         NavigationStack {
@@ -17,6 +19,9 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     sectionHeader("Connections")
                     connectionsCard
+
+                    sectionHeader("Earning")
+                    earningCard
 
                     sectionHeader("Gated apps")
                     gatedAppsCard
@@ -36,7 +41,16 @@ struct SettingsView: View {
             .background(DS.Color.gray0)
             .navigationTitle("Settings")
             .familyActivityPicker(isPresented: $isPickerPresented, selection: $shieldManager.selection)
+            .sheet(isPresented: $showGoalSheet) {
+                StepGoalEditorSheet(currentGoal: dailyGoal) { newGoal in
+                    AppGroup.sharedDefaults.set(newGoal, forKey: HealthKitConfig.DefaultsKey.dailyStepGoal)
+                    dailyGoal = newGoal
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                }
+                .presentationDetents([.medium])
+            }
             .task {
+                loadGoal()
                 await refreshAll()
             }
             .refreshable {
@@ -92,6 +106,33 @@ struct SettingsView: View {
                     .padding(8)
             }
         }
+    }
+
+    private var earningCard: some View {
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            showGoalSheet = true
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Daily step goal")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(DS.Color.gray900)
+                    Text("\(dailyGoal.formatted()) steps per day")
+                        .font(.system(size: 11))
+                        .foregroundStyle(DS.Color.gray400)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(DS.Color.gray400)
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 14)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .background(DS.Color.gray50, in: RoundedRectangle(cornerRadius: DS.Radius.r12, style: .continuous))
     }
 
     private var gatedAppsCard: some View {
@@ -163,6 +204,13 @@ struct SettingsView: View {
         case (0, let c): return "\(c) categor\(c == 1 ? "y" : "ies")"
         case (let a, let c): return "\(a) app\(a == 1 ? "" : "s") · \(c) categor\(c == 1 ? "y" : "ies")"
         }
+    }
+
+    // MARK: - Goal
+
+    private func loadGoal() {
+        let stored = AppGroup.sharedDefaults.integer(forKey: HealthKitConfig.DefaultsKey.dailyStepGoal)
+        dailyGoal = stored > 0 ? stored : HealthKitConfig.defaultDailyStepGoal
     }
 
     // MARK: - Connection checks

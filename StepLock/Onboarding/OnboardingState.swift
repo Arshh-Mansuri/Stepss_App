@@ -20,7 +20,7 @@ final class OnboardingState {
     }
 
     func advance() {
-        currentStep = min(currentStep + 1, 2)
+        currentStep = min(currentStep + 1, 3)
     }
 
     func goBack() {

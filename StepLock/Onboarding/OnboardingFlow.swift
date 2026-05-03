@@ -9,34 +9,35 @@ struct OnboardingFlow: View {
             DS.Color.gray0.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                OnboardingProgressDots(current: state.currentStep, total: 3)
+                OnboardingProgressDots(current: state.currentStep, total: 4)
                     .padding(.top, 8)
 
                 ZStack {
                     switch state.currentStep {
                     case 0:
                         OnboardingConceptView(onContinue: advance)
-                            .transition(.asymmetric(
-                                insertion: .move(edge: .trailing).combined(with: .opacity),
-                                removal: .move(edge: .leading).combined(with: .opacity)
-                            ))
+                            .transition(slideTransition)
                     case 1:
                         OnboardingPermissionsView(onContinue: advance, onBack: goBack)
-                            .transition(.asymmetric(
-                                insertion: .move(edge: .trailing).combined(with: .opacity),
-                                removal: .move(edge: .leading).combined(with: .opacity)
-                            ))
+                            .transition(slideTransition)
+                    case 2:
+                        OnboardingGoalView(onContinue: handleGoalSelected, onBack: goBack)
+                            .transition(slideTransition)
                     default:
                         OnboardingAppPickerView(onFinish: finish)
-                            .transition(.asymmetric(
-                                insertion: .move(edge: .trailing).combined(with: .opacity),
-                                removal: .move(edge: .leading).combined(with: .opacity)
-                            ))
+                            .transition(slideTransition)
                     }
                 }
                 .animation(.spring(response: 0.55, dampingFraction: 0.82), value: state.currentStep)
             }
         }
+    }
+
+    private var slideTransition: AnyTransition {
+        .asymmetric(
+            insertion: .move(edge: .trailing).combined(with: .opacity),
+            removal: .move(edge: .leading).combined(with: .opacity)
+        )
     }
 
     private func advance() {
@@ -45,6 +46,12 @@ struct OnboardingFlow: View {
 
     private func goBack() {
         state.goBack()
+    }
+
+    private func handleGoalSelected(_ goal: Int) {
+        AppGroup.sharedDefaults.set(goal, forKey: HealthKitConfig.DefaultsKey.dailyStepGoal)
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        state.advance()
     }
 
     private func finish() {

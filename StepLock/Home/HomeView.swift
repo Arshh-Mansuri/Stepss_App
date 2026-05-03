@@ -5,6 +5,7 @@ struct HomeView: View {
     @State private var isLoading: Bool = true
     @State private var errorText: String?
     @State private var dailyGoal: Int = HealthKitConfig.defaultDailyStepGoal
+    @State private var wallet = WalletStore.shared
 
     @Environment(\.scenePhase) private var scenePhase
 
@@ -34,15 +35,15 @@ struct HomeView: View {
                 HStack(spacing: 8) {
                     statTile(
                         label: "Points today",
-                        value: "+\(steps)",
+                        value: "+\(steps.formatted())",
                         sub: "1 step = 1 pt",
                         valueColor: DS.Color.teal400
                     )
                     statTile(
                         label: "Balance",
-                        value: "—",
-                        sub: "ledger pending",
-                        valueColor: DS.Color.gray400
+                        value: wallet.balance.formatted(),
+                        sub: "total points",
+                        valueColor: DS.Color.gray900
                     )
                 }
                 .padding(.top, 12)

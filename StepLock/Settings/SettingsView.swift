@@ -10,8 +10,10 @@ struct SettingsView: View {
     @State private var screenTimeState: ConnectionState = .checking
     @State private var isPickerPresented = false
     @State private var showResetConfirm = false
+    @State private var showResetBalanceConfirm = false
     @State private var showGoalSheet = false
     @State private var dailyGoal: Int = HealthKitConfig.defaultDailyStepGoal
+    @State private var wallet = WalletStore.shared
 
     var body: some View {
         NavigationStack {
@@ -65,6 +67,15 @@ struct SettingsView: View {
             } message: {
                 Text("Sends you back to the first onboarding screen. Your gated apps stay; only the onboarding flag is cleared.")
             }
+            .alert("Reset point balance?", isPresented: $showResetBalanceConfirm) {
+                Button("Cancel", role: .cancel) {}
+                Button("Reset", role: .destructive) {
+                    UINotificationFeedbackGenerator().notificationOccurred(.warning)
+                    wallet.reset()
+                }
+            } message: {
+                Text("Sets your balance back to 0 points. Future steps will start fresh from there.")
+            }
         }
     }
 
@@ -109,29 +120,69 @@ struct SettingsView: View {
     }
 
     private var earningCard: some View {
-        Button {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            showGoalSheet = true
-        } label: {
+        VStack(spacing: 0) {
+            Button {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                showGoalSheet = true
+            } label: {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Daily step goal")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(DS.Color.gray900)
+                        Text("\(dailyGoal.formatted()) steps per day")
+                            .font(.system(size: 11))
+                            .foregroundStyle(DS.Color.gray400)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(DS.Color.gray400)
+                }
+                .padding(.vertical, 14)
+                .padding(.horizontal, 14)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            Divider().padding(.leading, 14)
+
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Daily step goal")
+                    Text("Conversion rate")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(DS.Color.gray900)
-                    Text("\(dailyGoal.formatted()) steps per day")
+                    Text("1 step = 1 point (fixed for v1)")
                         .font(.system(size: 11))
                         .foregroundStyle(DS.Color.gray400)
                 }
                 Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(DS.Color.gray400)
+                Text("1:1")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(DS.Color.teal400)
             }
             .padding(.vertical, 14)
             .padding(.horizontal, 14)
-            .contentShape(Rectangle())
+
+            Divider().padding(.leading, 14)
+
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Current balance")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(DS.Color.gray900)
+                    Text("Total points earned, less anything spent")
+                        .font(.system(size: 11))
+                        .foregroundStyle(DS.Color.gray400)
+                }
+                Spacer()
+                Text(wallet.balance.formatted())
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(DS.Color.gray900)
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 14)
         }
-        .buttonStyle(.plain)
         .background(DS.Color.gray50, in: RoundedRectangle(cornerRadius: DS.Radius.r12, style: .continuous))
     }
 
@@ -166,31 +217,51 @@ struct SettingsView: View {
 
     private var developerCard: some View {
         VStack(spacing: 0) {
-            Button {
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            destructiveRow(
+                title: "Reset onboarding",
+                subtitle: "Re-shows the 4 setup screens on next launch",
+                symbol: "arrow.counterclockwise.circle.fill"
+            ) {
                 showResetConfirm = true
-            } label: {
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Reset onboarding")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(DS.Color.red600)
-                        Text("Re-shows the 3 setup screens on next launch")
-                            .font(.system(size: 11))
-                            .foregroundStyle(DS.Color.gray400)
-                    }
-                    Spacer()
-                    Image(systemName: "arrow.counterclockwise.circle.fill")
-                        .font(.system(size: 16))
-                        .foregroundStyle(DS.Color.red600.opacity(0.7))
-                }
-                .padding(.vertical, 14)
-                .padding(.horizontal, 14)
-                .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+
+            Divider().padding(.leading, 14)
+
+            destructiveRow(
+                title: "Reset balance",
+                subtitle: "Clears the point balance back to 0",
+                symbol: "minus.circle.fill"
+            ) {
+                showResetBalanceConfirm = true
+            }
         }
         .background(DS.Color.gray50, in: RoundedRectangle(cornerRadius: DS.Radius.r12, style: .continuous))
+    }
+
+    private func destructiveRow(title: String, subtitle: String, symbol: String, action: @escaping () -> Void) -> some View {
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            action()
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(DS.Color.red600)
+                    Text(subtitle)
+                        .font(.system(size: 11))
+                        .foregroundStyle(DS.Color.gray400)
+                }
+                Spacer()
+                Image(systemName: symbol)
+                    .font(.system(size: 16))
+                    .foregroundStyle(DS.Color.red600.opacity(0.7))
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 14)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Selection summary

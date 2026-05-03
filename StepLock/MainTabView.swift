@@ -8,15 +8,10 @@ struct MainTabView: View {
                     Label("Today", systemImage: "figure.walk")
                 }
 
-            PlaceholderTab(
-                title: "Spend",
-                subtitle: "Aditya — coming next",
-                symbol: "bolt.circle.fill",
-                tint: DS.Color.purple600
-            )
-            .tabItem {
-                Label("Spend", systemImage: "bolt.circle.fill")
-            }
+            SpendView()
+                .tabItem {
+                    Label("Spend", systemImage: "bolt.circle.fill")
+                }
 
             PlaceholderTab(
                 title: "History",

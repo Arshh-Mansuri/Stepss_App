@@ -30,9 +30,29 @@ final class WalletStore {
         defaults.set(balance, forKey: balanceKey)
     }
 
+    /// Subtract `points` from the balance. Throws `WalletError.insufficientFunds`
+    /// if the user doesn't have enough — caller should disable the spend CTA
+    /// before calling, but the throw is the safety net for race conditions.
+    func debit(points: Int) throws {
+        guard points > 0 else { return }
+        guard balance >= points else { throw WalletError.insufficientFunds }
+        balance -= points
+        defaults.set(balance, forKey: balanceKey)
+    }
+
     /// Set the balance back to zero. Used by the dev "Reset balance" row.
     func reset() {
         balance = 0
         defaults.set(0, forKey: balanceKey)
+    }
+}
+
+enum WalletError: Error, LocalizedError {
+    case insufficientFunds
+
+    var errorDescription: String? {
+        switch self {
+        case .insufficientFunds: return "Not enough points."
+        }
     }
 }

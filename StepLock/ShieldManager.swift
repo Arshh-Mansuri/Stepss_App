@@ -19,21 +19,23 @@ class ShieldManager {
         }
     }
     
-    // Apply (or remove) the shield based on what's currently selected.
-    // Apps and categories are applied independently — picking one app should
-    // NOT shield every other app on the device.
+    // Apply (or remove) the shield based on what's currently selected, while
+    // respecting any in-progress UnlockStore session (the unlocked app is
+    // temporarily exempted via .except).
     func applyShield() {
         let applications = selection.applicationTokens
         let categories = selection.categoryTokens
 
-        // Apps: shield only the specific tokens the user picked.
-        store.shield.applications = applications.isEmpty ? nil : applications
+        let exemptions: Set<ApplicationToken> = {
+            guard let token = UnlockStore.shared.activeApplicationToken else { return [] }
+            return [token]
+        }()
 
-        // Categories: shield only the specific categories the user picked.
-        // .all(except:) means "shield every category" — only use it if the
-        // user actually selected the top-level "All Apps and Categories" row.
+        let shieldedApps = applications.subtracting(exemptions)
+        store.shield.applications = shieldedApps.isEmpty ? nil : shieldedApps
+
         store.shield.applicationCategories = categories.isEmpty
             ? nil
-            : ShieldSettings.ActivityCategoryPolicy.specific(categories)
+            : ShieldSettings.ActivityCategoryPolicy.specific(categories, except: exemptions)
     }
 }

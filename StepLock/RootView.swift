@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RootView: View {
     @State private var onboarding = OnboardingState.shared
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         ZStack {
@@ -18,5 +19,10 @@ struct RootView: View {
             }
         }
         .animation(.spring(response: 0.55, dampingFraction: 0.82), value: onboarding.hasCompleted)
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                UnlockStore.shared.reapIfExpired()
+            }
+        }
     }
 }

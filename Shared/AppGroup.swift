@@ -1,6 +1,8 @@
 import Foundation
 
-enum AppGroup {
+// nonisolated so non-MainActor callers (e.g. EarningService actor) can read
+// the App Group container without hopping to the main actor.
+nonisolated enum AppGroup {
     // Matches the value provisioned in StepLock.entitlements / StepLockShield.entitlements.
     // Per architecture doc §3 — shared by the main app and all extensions.
     static let identifier = "group.com.steplock.shared"

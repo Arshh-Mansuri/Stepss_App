@@ -1,7 +1,9 @@
 import Foundation
 import HealthKit
 
-enum HealthKitConfig {
+// nonisolated so the non-MainActor EarningService actor can read these
+// constants without hopping to the main actor.
+nonisolated enum HealthKitConfig {
     static let stepType = HKQuantityType(.stepCount)
     static let backgroundFrequency: HKUpdateFrequency = .hourly
 

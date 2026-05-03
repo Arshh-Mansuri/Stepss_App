@@ -35,8 +35,8 @@ struct HomeView: View {
                 HStack(spacing: 8) {
                     statTile(
                         label: "Points today",
-                        value: "+\(steps.formatted())",
-                        sub: "1 step = 1 pt",
+                        value: "+\(pointsTodayDisplay.formatted())",
+                        sub: rateCaption,
                         valueColor: DS.Color.teal400
                     )
                     statTile(
@@ -172,6 +172,19 @@ struct HomeView: View {
                 dailyGoal = resolved
             }
         }
+    }
+
+    private var stepsPerPoint: Int {
+        let stored = AppGroup.sharedDefaults.integer(forKey: HealthKitConfig.DefaultsKey.stepsPerPoint)
+        return stored > 0 ? stored : HealthKitConfig.defaultStepsPerPoint
+    }
+
+    private var pointsTodayDisplay: Int {
+        steps / max(1, stepsPerPoint)
+    }
+
+    private var rateCaption: String {
+        stepsPerPoint == 1 ? "1 step = 1 pt" : "\(stepsPerPoint) steps = 1 pt"
     }
 
     private func refreshSteps() async {

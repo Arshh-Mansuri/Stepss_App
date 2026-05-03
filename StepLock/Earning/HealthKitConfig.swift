@@ -7,10 +7,16 @@ enum HealthKitConfig {
 
     enum DefaultsKey {
         static let lastSyncDate = "healthkit.stepCount.lastSyncDate"
-        static let pointsPerStep = "earning.pointsPerStep"
+        static let stepsPerPoint = "earning.stepsPerPoint"
         static let dailyStepGoal = "earning.dailyStepGoal"
     }
 
-    static let defaultPointsPerStep = 1
+    /// Steps required to earn one point. Range 1...10 per architecture doc §6.3.
+    /// 1 = 1 step → 1 point (most generous, MVP default).
+    /// 10 = 10 steps → 1 point (strictest).
+    static let defaultStepsPerPoint = 1
+    static let minStepsPerPoint = 1
+    static let maxStepsPerPoint = 10
+
     static let defaultDailyStepGoal = 10_000
 }

@@ -12,7 +12,9 @@ struct SettingsView: View {
     @State private var showResetConfirm = false
     @State private var showResetBalanceConfirm = false
     @State private var showGoalSheet = false
+    @State private var showRateSheet = false
     @State private var dailyGoal: Int = HealthKitConfig.defaultDailyStepGoal
+    @State private var stepsPerPoint: Int = HealthKitConfig.defaultStepsPerPoint
     @State private var wallet = WalletStore.shared
 
     var body: some View {
@@ -50,6 +52,14 @@ struct SettingsView: View {
                     UINotificationFeedbackGenerator().notificationOccurred(.success)
                 }
                 .presentationDetents([.medium])
+            }
+            .sheet(isPresented: $showRateSheet) {
+                ConversionRateEditorSheet(currentStepsPerPoint: stepsPerPoint) { newRate in
+                    AppGroup.sharedDefaults.set(newRate, forKey: HealthKitConfig.DefaultsKey.stepsPerPoint)
+                    stepsPerPoint = newRate
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                }
+                .presentationDetents([.medium, .large])
             }
             .task {
                 loadGoal()
@@ -147,22 +157,32 @@ struct SettingsView: View {
 
             Divider().padding(.leading, 14)
 
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Conversion rate")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(DS.Color.gray900)
-                    Text("1 step = 1 point (fixed for v1)")
-                        .font(.system(size: 11))
+            Button {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                showRateSheet = true
+            } label: {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Conversion rate")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(DS.Color.gray900)
+                        Text(rateSubtitle)
+                            .font(.system(size: 11))
+                            .foregroundStyle(DS.Color.gray400)
+                    }
+                    Spacer()
+                    Text("\(stepsPerPoint):1")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(DS.Color.teal400)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(DS.Color.gray400)
                 }
-                Spacer()
-                Text("1:1")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(DS.Color.teal400)
+                .padding(.vertical, 14)
+                .padding(.horizontal, 14)
+                .contentShape(Rectangle())
             }
-            .padding(.vertical, 14)
-            .padding(.horizontal, 14)
+            .buttonStyle(.plain)
 
             Divider().padding(.leading, 14)
 
@@ -277,11 +297,21 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Goal
+    // MARK: - Goal + rate
 
     private func loadGoal() {
         let stored = AppGroup.sharedDefaults.integer(forKey: HealthKitConfig.DefaultsKey.dailyStepGoal)
         dailyGoal = stored > 0 ? stored : HealthKitConfig.defaultDailyStepGoal
+
+        let storedRate = AppGroup.sharedDefaults.integer(forKey: HealthKitConfig.DefaultsKey.stepsPerPoint)
+        stepsPerPoint = storedRate > 0 ? storedRate : HealthKitConfig.defaultStepsPerPoint
+    }
+
+    private var rateSubtitle: String {
+        if stepsPerPoint == 1 {
+            return "1 step earns 1 point — most generous"
+        }
+        return "\(stepsPerPoint) steps earn 1 point"
     }
 
     // MARK: - Connection checks

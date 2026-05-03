@@ -14,11 +14,18 @@ actor EarningService {
     func record(stepDelta: Int, occurredAt: Date) async {
         guard stepDelta > 0 else { return }
 
-        let pointsPerStep = defaults.object(forKey: HealthKitConfig.DefaultsKey.pointsPerStep) as? Int
-            ?? HealthKitConfig.defaultPointsPerStep
-        let points = stepDelta * pointsPerStep
+        let storedRate = defaults.object(forKey: HealthKitConfig.DefaultsKey.stepsPerPoint) as? Int
+            ?? HealthKitConfig.defaultStepsPerPoint
+        let stepsPerPoint = max(HealthKitConfig.minStepsPerPoint,
+                                min(HealthKitConfig.maxStepsPerPoint, storedRate))
+        let points = stepDelta / stepsPerPoint  // integer division; floor
 
-        log.info("Earned \(points, privacy: .public) pts from \(stepDelta, privacy: .public) steps at \(occurredAt, privacy: .public)")
+        guard points > 0 else {
+            log.debug("Skipped credit: \(stepDelta) steps below \(stepsPerPoint) steps-per-point threshold")
+            return
+        }
+
+        log.info("Earned \(points, privacy: .public) pts from \(stepDelta, privacy: .public) steps (rate 1 pt / \(stepsPerPoint, privacy: .public) steps) at \(occurredAt, privacy: .public)")
 
         // TODO(arsh-followup): swap WalletStore.credit for Aditya's
         // SpendingLedger.earn(points:metadata:) once it's published.

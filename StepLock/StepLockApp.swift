@@ -13,20 +13,25 @@ struct StepLockApp: App {
     private let log = Logger(subsystem: "com.steplock", category: "app")
 
     init() {
-        Task { @Sendable in
+        // If onboarding is already done from a previous launch, restart the
+        // observer query so step deltas keep flowing on app boot. First-run
+        // permission requests happen on the Permissions screen instead.
+        let alreadyOnboarded = AppGroup.sharedDefaults.bool(forKey: OnboardingDefaultsKey.hasCompleted)
+        guard alreadyOnboarded else { return }
+
+        Task {
             do {
-                try await HealthKitService.shared.requestAuthorization()
                 try await HealthKitService.shared.start()
             } catch {
                 Logger(subsystem: "com.steplock", category: "app")
-                    .warning("HealthKit boot failed: \(error.localizedDescription, privacy: .public)")
+                    .warning("HealthKit restart failed: \(error.localizedDescription, privacy: .public)")
             }
         }
     }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }

@@ -3,24 +3,26 @@ import Foundation
 // nonisolated so non-MainActor callers (e.g. EarningService actor) can read
 // the App Group container without hopping to the main actor.
 nonisolated enum AppGroup {
-    // Matches the value provisioned in StepLock.entitlements / StepLockShield.entitlements.
-    // Spec calls for "group.com.steplock.shared" but that string isn't registered
-    // to this team's developer portal — using the original "group.uts.StepLock"
-    // which is provisioned. We can rename to the spec value once the App Group
-    // is registered with Apple (paid account + portal entry).
+    // The architecture spec calls for "group.com.steplock.shared". For now
+    // the App Group capability is temporarily DISABLED in entitlements so
+    // the project signs cleanly without a developer-portal registration.
+    // Re-enable when (a) the App Group is registered on the team, and
+    // (b) extension targets are introduced and need cross-process storage.
     static let identifier = "group.uts.StepLock"
 
-    static var containerURL: URL {
-        guard let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: identifier) else {
-            fatalError("App Group container unavailable — check entitlements for \(identifier)")
-        }
-        return url
+    /// Returns nil when the App Group capability isn't enabled. Currently
+    /// only used by the dormant ModelContainerFactory; SwiftData wiring is
+    /// not active in v1.
+    static var containerURL: URL? {
+        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: identifier)
     }
 
+    /// Returns the App Group UserDefaults suite if available, otherwise the
+    /// app's standard UserDefaults. While the App Group capability is off
+    /// (no extensions yet) this transparently falls back, so all our stores
+    /// (WalletStore, OnboardingState, UnlockStore, LedgerStore) keep working
+    /// without needing changes.
     static var sharedDefaults: UserDefaults {
-        guard let defaults = UserDefaults(suiteName: identifier) else {
-            fatalError("UserDefaults suite unavailable for App Group \(identifier)")
-        }
-        return defaults
+        UserDefaults(suiteName: identifier) ?? .standard
     }
 }

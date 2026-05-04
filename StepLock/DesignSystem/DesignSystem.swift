@@ -1,41 +1,56 @@
 import SwiftUI
+import UIKit
 
-// Tokens mirror steplock_mockups_v3.html. Update both together.
+// Tokens mirror steplock_mockups_v3.html (light values) plus a hand-tuned
+// dark variant per token. Each color is a UIColor dynamicProvider wrapped
+// in Color, so views automatically pick the right shade based on the
+// current trait collection. No view-side colorScheme switching needed.
 enum DS {
     enum Color {
         // Earn — Teal
-        static let teal50  = SwiftUI.Color(red: 0.882, green: 0.961, blue: 0.933)
-        static let teal400 = SwiftUI.Color(red: 0.114, green: 0.620, blue: 0.459)
-        static let teal600 = SwiftUI.Color(red: 0.059, green: 0.431, blue: 0.337)
-        static let teal900 = SwiftUI.Color(red: 0.016, green: 0.204, blue: 0.173)
+        static let teal50  = dyn(0.882, 0.961, 0.933,  0.04, 0.16, 0.13)
+        static let teal400 = dyn(0.114, 0.620, 0.459,  0.20, 0.74, 0.57)   // brighter in dark for accent contrast
+        static let teal600 = dyn(0.059, 0.431, 0.337,  0.40, 0.84, 0.70)
+        static let teal900 = dyn(0.016, 0.204, 0.173,  0.84, 0.96, 0.91)   // inverts for "headline on teal bg"
 
         // Spend — Purple
-        static let purple50  = SwiftUI.Color(red: 0.933, green: 0.929, blue: 0.996)
-        static let purple100 = SwiftUI.Color(red: 0.808, green: 0.796, blue: 0.965)
-        static let purple200 = SwiftUI.Color(red: 0.686, green: 0.663, blue: 0.925)
-        static let purple400 = SwiftUI.Color(red: 0.498, green: 0.467, blue: 0.867)
-        static let purple600 = SwiftUI.Color(red: 0.325, green: 0.290, blue: 0.718)
-        static let purple800 = SwiftUI.Color(red: 0.235, green: 0.204, blue: 0.537)
-        static let purple900 = SwiftUI.Color(red: 0.149, green: 0.129, blue: 0.361)
+        static let purple50  = dyn(0.933, 0.929, 0.996,  0.13, 0.12, 0.22)
+        static let purple100 = dyn(0.808, 0.796, 0.965,  0.20, 0.18, 0.32)
+        static let purple200 = dyn(0.686, 0.663, 0.925,  0.36, 0.33, 0.55)
+        static let purple400 = dyn(0.498, 0.467, 0.867,  0.62, 0.58, 0.92)   // brighter for dark contrast
+        static let purple600 = dyn(0.325, 0.290, 0.718,  0.55, 0.50, 0.95)
+        static let purple800 = dyn(0.235, 0.204, 0.537,  0.71, 0.66, 0.95)
+        static let purple900 = dyn(0.149, 0.129, 0.361,  0.86, 0.83, 0.97)   // inverts for "headline on purple bg"
 
         // Neutrals
-        static let gray0   = SwiftUI.Color.white
-        static let gray50  = SwiftUI.Color(red: 0.961, green: 0.957, blue: 0.945)
-        static let gray100 = SwiftUI.Color(red: 0.933, green: 0.925, blue: 0.918)
-        static let gray200 = SwiftUI.Color(red: 0.839, green: 0.831, blue: 0.808)
-        static let gray400 = SwiftUI.Color(red: 0.604, green: 0.596, blue: 0.573)
-        static let gray600 = SwiftUI.Color(red: 0.361, green: 0.357, blue: 0.341)
-        static let gray800 = SwiftUI.Color(red: 0.165, green: 0.165, blue: 0.157)
-        static let gray900 = SwiftUI.Color(red: 0.094, green: 0.094, blue: 0.086)
+        static let gray0   = dyn(1.00, 1.00, 1.00,  0.07, 0.07, 0.08)        // app background
+        static let gray50  = dyn(0.961, 0.957, 0.945,  0.11, 0.11, 0.12)     // card background
+        static let gray100 = dyn(0.933, 0.925, 0.918,  0.16, 0.16, 0.17)
+        static let gray200 = dyn(0.839, 0.831, 0.808,  0.27, 0.27, 0.29)     // borders / dividers
+        static let gray400 = dyn(0.604, 0.596, 0.573,  0.55, 0.54, 0.55)     // muted text
+        static let gray600 = dyn(0.361, 0.357, 0.341,  0.74, 0.73, 0.74)
+        static let gray800 = dyn(0.165, 0.165, 0.157,  0.91, 0.91, 0.92)
+        static let gray900 = dyn(0.094, 0.094, 0.086,  0.98, 0.98, 0.98)     // primary text
 
-        static let red50  = SwiftUI.Color(red: 0.988, green: 0.922, blue: 0.922)
-        static let red600 = SwiftUI.Color(red: 0.639, green: 0.176, blue: 0.176)
+        static let red50  = dyn(0.988, 0.922, 0.922,  0.30, 0.10, 0.10)
+        static let red600 = dyn(0.639, 0.176, 0.176,  0.96, 0.40, 0.40)
 
-        // Shield — always dark (extension uses these directly)
+        // Shield (always dark — never adapts; matches spec for the extension UI)
         static let shieldBg      = SwiftUI.Color(red: 0.059, green: 0.055, blue: 0.102)
         static let shieldSurface = SwiftUI.Color(red: 0.102, green: 0.094, blue: 0.157)
         static let shieldText    = SwiftUI.Color(red: 0.941, green: 0.937, blue: 0.996)
         static let shieldMuted   = SwiftUI.Color(red: 0.608, green: 0.584, blue: 0.831)
+
+        /// Dynamic color helper. Returns a SwiftUI Color whose underlying UIColor
+        /// resolves to the light or dark RGB based on the current user interface style.
+        private static func dyn(_ lr: Double, _ lg: Double, _ lb: Double,
+                                _ dr: Double, _ dg: Double, _ db: Double) -> SwiftUI.Color {
+            SwiftUI.Color(uiColor: UIColor { trait in
+                trait.userInterfaceStyle == .dark
+                    ? UIColor(red: dr, green: dg, blue: db, alpha: 1)
+                    : UIColor(red: lr, green: lg, blue: lb, alpha: 1)
+            })
+        }
     }
 
     enum Radius {

@@ -16,6 +16,7 @@ struct SettingsView: View {
     @State private var dailyGoal: Int = HealthKitConfig.defaultDailyStepGoal
     @State private var stepsPerPoint: Int = HealthKitConfig.defaultStepsPerPoint
     @State private var wallet = WalletStore.shared
+    @State private var appearance = AppearanceStore.shared
 
     var body: some View {
         NavigationStack {
@@ -23,6 +24,9 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     connectionsHeader
                     connectionsCard
+
+                    sectionHeader("Appearance")
+                    appearanceCard
 
                     sectionHeader("Earning")
                     earningCard
@@ -143,6 +147,41 @@ struct SettingsView: View {
                 state: screenTimeState
             )
         }
+        .background(DS.Color.gray50, in: RoundedRectangle(cornerRadius: DS.Radius.r12, style: .continuous))
+    }
+
+    private var appearanceCard: some View {
+        HStack(spacing: 6) {
+            ForEach(AppearancePreference.allCases, id: \.self) { option in
+                let isOn = appearance.preference == option
+                Button {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        appearance.preference = option
+                    }
+                } label: {
+                    VStack(spacing: 6) {
+                        Image(systemName: option.symbol)
+                            .font(.system(size: 18, weight: .semibold))
+                        Text(option.label)
+                            .font(.system(size: 12, weight: .semibold))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .foregroundStyle(isOn ? Color.white : DS.Color.gray600)
+                    .background(
+                        isOn ? DS.Color.purple600 : DS.Color.gray0,
+                        in: RoundedRectangle(cornerRadius: DS.Radius.r10, style: .continuous)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DS.Radius.r10, style: .continuous)
+                            .strokeBorder(isOn ? Color.clear : DS.Color.gray200, lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(8)
         .background(DS.Color.gray50, in: RoundedRectangle(cornerRadius: DS.Radius.r12, style: .continuous))
     }
 

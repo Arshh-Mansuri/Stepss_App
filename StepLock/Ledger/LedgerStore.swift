@@ -50,6 +50,16 @@ final class LedgerStore {
         )
         append(.spend(payload))
     }
+    
+    func recordRefund(sessionId: UUID, points: Int, reason: String, occurredAt: Date = .now) {
+        let payload = LedgerEntry.RefundPayload(
+            id: sessionId,
+            occurredAt: occurredAt,
+            pointsRefunded: points,
+            reason: reason
+        )
+        append(.refund(payload))
+    }
 
     func reset() {
         entries = []

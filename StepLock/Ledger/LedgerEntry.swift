@@ -6,11 +6,13 @@ import Foundation
 enum LedgerEntry: Codable, Identifiable, Equatable {
     case earn(EarnPayload)
     case spend(SpendPayload)
+    case refund(RefundPayload)
 
     var id: UUID {
         switch self {
-        case .earn(let p):  return p.id
+        case .earn(let p): return p.id
         case .spend(let p): return p.id
+        case .refund(let p): return p.id
         }
     }
 
@@ -18,14 +20,16 @@ enum LedgerEntry: Codable, Identifiable, Equatable {
         switch self {
         case .earn(let p):  return p.occurredAt
         case .spend(let p): return p.occurredAt
+        case .refund(let p): return p.occurredAt
         }
     }
 
-    /// Positive for earn, negative for spend. Used by the "This week" summary.
+    /// Positive for earn/refund, negative for spend. Used by the "This week" summary.
     var pointsDelta: Int {
         switch self {
         case .earn(let p):  return p.pointsEarned
         case .spend(let p): return -p.pointsSpent
+        case .refund(let p): return p.pointsRefunded
         }
     }
 
@@ -35,6 +39,13 @@ enum LedgerEntry: Codable, Identifiable, Equatable {
         let stepDelta: Int
         let pointsEarned: Int
         let stepsPerPoint: Int
+    }
+    
+    struct RefundPayload: Codable, Equatable {
+        let id: UUID           // matches the original SpendPayload.id
+        let occurredAt: Date
+        let pointsRefunded: Int
+        let reason: String
     }
 
     struct SpendPayload: Codable, Equatable {

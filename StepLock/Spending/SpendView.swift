@@ -345,35 +345,40 @@ struct SpendView: View {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         isSpending = true
         errorText = nil
-
-        do {
-            try wallet.debit(points: tier.pointsCost)
-            let session: UnlockSession
-            switch target {
-            case .application(let token):
-                session = try UnlockSession.make(
-                    applicationToken: token,
-                    pointsSpent: tier.pointsCost,
-                    durationMinutes: tier.durationMinutes
-                )
-            case .category(let token):
-                session = try UnlockSession.make(
-                    categoryToken: token,
-                    pointsSpent: tier.pointsCost,
-                    durationMinutes: tier.durationMinutes
-                )
+        
+        Task {
+            do {
+                let session: UnlockSession
+                switch target {
+                case .application(let token):
+                    session = try UnlockSession.make(
+                        applicationToken: token,
+                        pointsSpent: tier.pointsCost,
+                        durationMinutes: tier.durationMinutes
+                    )
+                case .category(let token):
+                    session = try UnlockSession.make(
+                        categoryToken: token,
+                        pointsSpent: tier.pointsCost,
+                        durationMinutes: tier.durationMinutes
+                    )
+                }
+                try await SpendingLedger.shared.spend(session: session)
+                try await UnlockScheduler.shared.schedule(session: session)
+                await MainActor.run {
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                    selectedTier = nil
+                    selectedTarget = nil
+                    isSpending = false
+                }
+            } catch {
+                await MainActor.run {
+                    errorText = error.localizedDescription
+                    UINotificationFeedbackGenerator().notificationOccurred(.error)
+                    isSpending = false
+                }
             }
-            unlockStore.start(session)
-            LedgerStore.shared.recordSpend(session: session)
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
-            selectedTier = nil
-            selectedTarget = nil
-        } catch {
-            errorText = error.localizedDescription
-            UINotificationFeedbackGenerator().notificationOccurred(.error)
         }
-
-        isSpending = false
     }
 
     private func reapExpiry() {

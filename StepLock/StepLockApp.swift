@@ -30,6 +30,9 @@ struct StepLockApp: App {
                     .warning("HealthKit restart failed: \(error.localizedDescription, privacy: .public)")
             }
         }
+        Task {
+            await RecoveryService.shared.run()
+        }
     }
 
     var body: some Scene {

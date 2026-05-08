@@ -118,6 +118,7 @@ struct HistoryView: View {
         switch entry {
         case .earn(let p):  earnRow(p)
         case .spend(let p): spendRow(p)
+        case .refund(let p): refundRow(p)
         }
     }
 
@@ -164,6 +165,26 @@ struct HistoryView: View {
         .padding(.horizontal, 14)
     }
 
+    private func refundRow(_ p: LedgerEntry.RefundPayload) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            iconBubble(symbol: "arrow.uturn.left", bg: DS.Color.gray100, fg: DS.Color.gray600)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Refund")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(DS.Color.gray900)
+                Text(relativeTime(p.occurredAt))
+                    .font(.system(size: 11))
+                    .foregroundStyle(DS.Color.gray400)
+            }
+            Spacer()
+            Text("+\(p.pointsRefunded.formatted())")
+                .font(.system(size: 15, weight: .heavy))
+                .foregroundStyle(DS.Color.gray600)
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 14)
+    }
+    
     @ViewBuilder
     private func spendTargetLabel(_ p: LedgerEntry.SpendPayload) -> some View {
         switch p.kind {
@@ -247,6 +268,7 @@ struct HistoryView: View {
             switch entry {
             case .earn(let p):  earned += p.pointsEarned
             case .spend(let p): spent  += p.pointsSpent
+            case .refund(let p): spent  -= p.pointsRefunded
             }
         }
         return WeekStats(earned: earned, spent: spent, net: earned - spent)

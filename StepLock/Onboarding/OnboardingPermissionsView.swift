@@ -145,6 +145,13 @@ struct OnboardingPermissionsView: View {
 
     private func requestPermissions() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        // 🧪 DEV MODE: Skip permissions in simulator
+        if DevConfig.bypassPermissions {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.onContinue()
+            }
+            return
+        }
         isRequesting = true
         errorText = nil
 

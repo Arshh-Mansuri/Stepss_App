@@ -17,14 +17,15 @@ final class DatabaseManager {
     private init() {
         do {
             let fileManager = FileManager.default
-            
-            guard let containerURL = fileManager.containerURL(
-                forSecurityApplicationGroupIdentifier: "group.com.steplock.shared"
-            ) else {
-                fatalError("App Group container not found")
-            }
 
-            let dbFolder = containerURL.appendingPathComponent("db", isDirectory: true)
+            // Prefer the App Group container (shared with extensions). Fall back
+            // to the app's own Documents directory when the App Group capability
+            // isn't enabled — mirrors the AppGroup.sharedDefaults fallback.
+            let baseURL: URL = fileManager.containerURL(
+                forSecurityApplicationGroupIdentifier: "group.com.steplock.shared"
+            ) ?? fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+
+            let dbFolder = baseURL.appendingPathComponent("db", isDirectory: true)
             let dbURL = dbFolder.appendingPathComponent("steplock.sqlite")
 
             // Create directory if needed
@@ -33,15 +34,8 @@ final class DatabaseManager {
                 withIntermediateDirectories: true
             )
 
-            // Create database queue
             dbQueue = try DatabaseQueue(path: dbURL.path)
-
-            // Run migrations
             try migrator.migrate(dbQueue)
-
-            // Remove later
-            print("✅ Database initialized at:", dbURL.path)
-
         } catch {
             fatalError("❌ Database init failed: \(error)")
         }

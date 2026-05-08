@@ -19,6 +19,7 @@ struct SpendView: View {
     @State private var selectedTier: PricingEngine.Tier?
     @State private var isSpending = false
     @State private var errorText: String?
+    @State private var now: Date = .now
 
     @Environment(\.scenePhase) private var scenePhase
 
@@ -72,7 +73,8 @@ struct SpendView: View {
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active { reapExpiry() }
             }
-            .onReceive(tickTimer) { _ in
+            .onReceive(tickTimer) { date in
+                now = date
                 if unlockStore.activeSession != nil {
                     reapExpiry()
                 }
@@ -309,7 +311,7 @@ struct SpendView: View {
                 Text("An app is unlocked")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(DS.Color.teal900)
-                Text("Time remaining: \(formatRemaining(session.remainingSeconds))")
+                Text("Time remaining: \(formatRemaining(max(0, Int(session.expiresAt.timeIntervalSince(now)))))")
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(DS.Color.teal600)
                     .contentTransition(.numericText())

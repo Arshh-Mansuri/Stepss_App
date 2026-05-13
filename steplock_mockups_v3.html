@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StepLock — Mockups v3</title>
+<style>
+:root {
+  --teal-50:#E1F5EE; --teal-400:#1D9E75; --teal-600:#0F6E56; --teal-900:#04342C;
+  --purple-50:#EEEDFE; --purple-100:#CECBF6; --purple-200:#AFA9EC;
+  --purple-400:#7F77DD; --purple-600:#534AB7; --purple-800:#3C3489; --purple-900:#26215C;
+  --gray-0:#FFFFFF; --gray-50:#F5F4F1; --gray-100:#EEECEA; --gray-200:#D6D4CE;
+  --gray-400:#9A9892; --gray-600:#5C5B57; --gray-800:#2A2A28; --gray-900:#181816;
+  --red-50:#FCEBEB; --red-600:#A32D2D;
+  --amber-50:#FFF3E0; --amber-600:#E65100;
+  --shield-bg:#0F0E1A; --shield-surface:#1A1828;
+  --shield-border:rgba(175,169,236,0.15);
+  --shield-text:#F0EFFE; --shield-muted:#9B95D4;
+  --font:-apple-system,'SF Pro Display','SF Pro Text',system-ui,sans-serif;
+  --r6:6px; --r10:10px; --r12:12px; --r14:14px; --r20:20px; --r28:28px; --rFull:9999px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:#E8E6E0;color:var(--gray-900);padding:36px 28px 80px;line-height:1}
+
+/* ── PAGE CHROME ── */
+.pg-head{max-width:1160px;margin:0 auto 40px}
+.pg-head h1{font-size:22px;font-weight:700;letter-spacing:-0.4px;color:var(--gray-900)}
+.pg-head p{font-size:13px;color:var(--gray-600);margin-top:5px}
+.v-badge{display:inline-block;font-size:10px;font-weight:700;background:var(--purple-600);color:#fff;padding:3px 9px;border-radius:var(--rFull);margin-bottom:10px;letter-spacing:.04em}
+.sec{max-width:1160px;margin:0 auto 18px;display:flex;align-items:center;gap:10px}
+.sec h2{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-400);white-space:nowrap}
+.sec-line{flex:1;height:.5px;background:var(--gray-200)}
+.sec-owner{font-size:11px;color:var(--gray-400);white-space:nowrap}
+.sec-owner b{color:var(--purple-600)}
+.owner-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;position:relative;top:-0.5px}
+
+/* ── PHONE GRID ── */
+.grid{display:flex;flex-wrap:wrap;gap:28px;max-width:1160px;margin:0 auto 56px;align-items:flex-start}
+.pw{display:flex;flex-direction:column;align-items:center;gap:10px}
+.plabel{font-size:11px;color:var(--gray-600);text-align:center;line-height:1.5}
+
+/* ── PHONE FRAME ── */
+.phone{width:248px;background:#1C1C1E;border-radius:38px;padding:9px;
+  box-shadow:0 0 0 .5px rgba(255,255,255,.07) inset, 0 20px 48px rgba(0,0,0,.22), 0 4px 12px rgba(0,0,0,.12);
+  flex-shrink:0;position:relative}
+.phone::before{content:'';position:absolute;top:9px;left:50%;transform:translateX(-50%);
+  width:76px;height:26px;background:#1C1C1E;border-radius:0 0 16px 16px;z-index:10}
+.scr{background:var(--gray-0);border-radius:30px;overflow:hidden;min-height:506px;display:flex;flex-direction:column}
+.scr.dark{background:var(--shield-bg)}
+
+/* ── STATUS BAR ── */
+.sb{display:flex;justify-content:space-between;align-items:center;padding:13px 18px 0;height:42px}
+.sb .t{font-size:15px;font-weight:600;color:var(--gray-900)}
+.sb.dk .t{color:var(--shield-text)}
+.sb-icons{display:flex;gap:5px;align-items:center}
+
+/* ── SCREEN BODY ── */
+.body{flex:1;display:flex;flex-direction:column;padding:0 15px;overflow:hidden}
+
+/* ── NAV ── */
+.nav{display:flex;justify-content:space-between;align-items:center;padding:6px 0 10px}
+.ntitle{font-size:16px;font-weight:600;letter-spacing:-.2px;color:var(--gray-900)}
+.nlarge{font-size:26px;font-weight:700;letter-spacing:-.8px;color:var(--gray-900);padding:4px 0 12px;line-height:1}
+.nbtn{width:30px;height:30px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center}
+
+/* ── TAB BAR ── */
+.tabs{display:flex;border-top:.5px solid var(--gray-100);padding:5px 0 10px;background:rgba(255,255,255,.95)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding-top:4px}
+.tlabel{font-size:9.5px;font-weight:500;color:var(--gray-400);letter-spacing:.01em}
+.tab.on .tlabel{color:var(--purple-600);font-weight:600}
+
+/* ── SECTION LABEL ── */
+.slabel{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gray-400);margin:12px 0 6px}
+
+/* ── STAT TILES ── */
+.stat2{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}
+.stile{background:var(--gray-50);border-radius:var(--r12);padding:10px 11px}
+.stlabel{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gray-400);margin-bottom:3px}
+.stval{font-size:20px;font-weight:700;letter-spacing:-.5px;color:var(--gray-900);line-height:1}
+.stval.teal{color:var(--teal-400)}
+.stsub{font-size:10px;color:var(--gray-400);margin-top:2px}
+
+/* ── INFO CARDS ── */
+.icard{border-radius:var(--r12);padding:10px 12px;margin-bottom:8px}
+.icard.purple{background:var(--purple-50)}
+.icard.teal{background:var(--teal-50)}
+.icard.gray{background:var(--gray-50)}
+.iclabel{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px}
+.icard.purple .iclabel{color:var(--purple-600)}
+.icard.teal   .iclabel{color:var(--teal-600)}
+.icard.gray   .iclabel{color:var(--gray-400)}
+.icval{font-size:12.5px;font-weight:600;line-height:1.4;letter-spacing:-.1px}
+.icard.purple .icval{color:var(--purple-900)}
+.icard.teal   .icval{color:var(--teal-900)}
+.icard.gray   .icval{color:var(--gray-800)}
+
+/* ── BUTTONS ── */
+.btn{border:none;border-radius:var(--r12);padding:13px 14px;font-size:14px;font-weight:600;width:100%;text-align:center;letter-spacing:-.1px;margin-top:auto}
+.btn.dark{background:var(--gray-900);color:#fff}
+.btn.purple{background:var(--purple-600);color:#fff}
+.btn.ghost{background:none;color:var(--gray-400);font-size:13px;font-weight:500;padding:9px}
+.btn.disabled{background:var(--gray-100);color:var(--gray-400)}
+
+/* ── RING ── */
+.ring-wrap{display:flex;justify-content:center;position:relative;margin:2px 0 10px}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.rval{font-size:24px;font-weight:800;letter-spacing:-1px;color:var(--gray-900);line-height:1}
+.runit{font-size:10px;color:var(--gray-400);font-weight:500;margin-top:3px}
+.rpct{font-size:11px;color:var(--teal-400);font-weight:700;margin-top:2px}
+
+/* ── ONBOARDING ── */
+.ob-dots{display:flex;justify-content:center;gap:5px;padding:10px 0 4px}
+.ob-dot{width:5px;height:5px;border-radius:50%;background:var(--gray-200)}
+.ob-dot.on{width:18px;border-radius:var(--rFull);background:var(--purple-400)}
+.ob-hero{padding:24px 0 16px;display:flex;flex-direction:column;align-items:center}
+.ob-icon{width:68px;height:68px;border-radius:22px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.ob-h{font-size:21px;font-weight:800;letter-spacing:-.5px;text-align:center;color:var(--gray-900);line-height:1.15;padding:0 4px}
+.ob-sub{font-size:13px;color:var(--gray-400);text-align:center;line-height:1.5;margin-top:7px;padding:0 8px}
+
+/* ── STEP FLOW (onboard 1) ── */
+.flow{display:flex;align-items:center;justify-content:center;gap:0;margin:16px 0 20px;padding:0 4px}
+.flow-step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+.flow-icon{width:40px;height:40px;border-radius:var(--r12);display:flex;align-items:center;justify-content:center}
+.flow-lbl{font-size:10px;font-weight:600;color:var(--gray-600);text-align:center;line-height:1.3}
+.flow-arrow{color:var(--gray-300);font-size:16px;margin-bottom:14px;flex-shrink:0;padding:0 2px}
+
+/* ── SPEND SCREEN ── */
+.spend-step{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--purple-400);margin:10px 0 5px}
+.app-row{display:flex;align-items:center;padding:8px 9px;border-radius:var(--r10);gap:9px;margin-bottom:3px}
+.app-row.sel{background:var(--purple-50)}
+.tok-chip{width:34px;height:34px;border-radius:9px;background:var(--gray-100);border:.5px solid var(--gray-200);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.aname{font-size:12.5px;font-weight:500;color:var(--gray-900)}
+.asub{font-size:10.5px;color:var(--gray-400);margin-top:1px}
+.chk{width:19px;height:19px;border-radius:50%;background:var(--purple-400);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.unchk{width:19px;height:19px;border-radius:50%;border:1.5px solid var(--gray-200);flex-shrink:0}
+.dur-card{border:1px solid var(--gray-100);border-radius:var(--r12);padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.dur-card.sel{border:2px solid var(--purple-400);background:var(--purple-50);padding:9px 11px}
+.dur-card.locked{opacity:.35}
+.dtitle{font-size:13.5px;font-weight:600;color:var(--gray-900)}
+.dhint{font-size:10.5px;color:var(--gray-400);margin-top:1px}
+.dcost{font-size:12.5px;font-weight:700;color:var(--purple-600)}
+.dneed{font-size:9.5px;color:var(--gray-400);text-align:right;margin-top:1px}
+.bal-preview{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;background:var(--gray-50);border-radius:var(--r10);margin:7px 0 9px}
+.bpl{font-size:11.5px;color:var(--gray-600)}
+.bpv{font-size:12.5px;font-weight:700;color:var(--gray-900)}
+
+/* ── HISTORY ── */
+.tx{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:.5px solid var(--gray-100)}
+.tx:last-child{border-bottom:none}
+.txicon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.txicon.earn{background:var(--teal-50)} .txicon.spend{background:var(--purple-50)} .txicon.ref{background:var(--amber-50)}
+.txmeta{flex:1}
+.txtitle{font-size:12.5px;font-weight:500;color:var(--gray-900);line-height:1.3}
+.txsub{font-size:10.5px;color:var(--gray-400);margin-top:2px}
+.txd{font-size:13px;font-weight:700;line-height:1}
+.txd.pos{color:var(--teal-400)} .txd.neg{color:var(--purple-600)} .txd.rf{color:var(--amber-600)}
+
+/* ── SETTINGS ── */
+.sg{background:var(--gray-50);border-radius:var(--r12);overflow:hidden;margin-bottom:8px}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-bottom:.5px solid var(--gray-100);gap:8px}
+.sr:last-child{border-bottom:none}
+.srlabel{font-size:13px;font-weight:500;color:var(--gray-900)}
+.srsub{font-size:10.5px;color:var(--gray-400);margin-top:1.5px}
+.srval{font-size:12px;color:var(--gray-400)}
+.chev{width:6px;height:6px;border-right:1.5px solid var(--gray-300);border-top:1.5px solid var(--gray-300);transform:rotate(45deg);flex-shrink:0}
+.tog{width:36px;height:21px;border-radius:var(--rFull);position:relative;flex-shrink:0}
+.tog.on{background:var(--teal-400)} .tog.off{background:var(--gray-200)}
+.tog-thumb{position:absolute;width:17px;height:17px;border-radius:50%;background:#fff;top:2px;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.tog.on .tog-thumb{right:2px} .tog.off .tog-thumb{left:2px}
+
+/* ── SHIELD ── */
+.shield-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 18px 22px;text-align:center}
+.s-chip{width:54px;height:54px;border-radius:15px;background:rgba(127,119,221,.12);border:1px solid var(--shield-border);display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:600;color:var(--shield-muted);line-height:1.3;text-align:center;margin-bottom:13px}
+.s-title{font-size:18px;font-weight:700;color:var(--shield-text);letter-spacing:-.3px;margin-bottom:5px}
+.s-sub{font-size:12.5px;color:var(--shield-muted);line-height:1.5;margin-bottom:18px;padding:0 4px}
+.s-bal-card{background:var(--shield-surface);border:1px solid var(--shield-border);border-radius:var(--r12);padding:11px 14px;width:100%;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.s-bal-label{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--shield-muted)}
+.s-bal-val{font-size:20px;font-weight:800;color:var(--shield-text);margin-top:2px;letter-spacing:-.5px}
+.s-prog{width:100%;margin-bottom:16px}
+.s-prog-labels{font-size:10px;color:var(--shield-muted);display:flex;justify-content:space-between;margin-bottom:5px}
+.s-prog-bar{height:3.5px;background:rgba(175,169,236,.12);border-radius:var(--rFull);overflow:hidden}
+.s-prog-fill{height:100%;background:var(--purple-400);border-radius:var(--rFull)}
+.s-btn-p{width:100%;background:var(--purple-100);color:var(--purple-900);border:none;border-radius:var(--r12);padding:13px;font-size:14px;font-weight:700;text-align:center;margin-bottom:7px;letter-spacing:-.1px}
+.s-btn-s{width:100%;background:rgba(175,169,236,.1);color:var(--shield-muted);border:1px solid var(--shield-border);border-radius:var(--r12);padding:11px;font-size:12.5px;font-weight:500;text-align:center}
+.s-tiers{display:flex;gap:5px;width:100%;margin-bottom:14px}
+.s-tier{flex:1;background:rgba(175,169,236,.08);border:1px solid var(--shield-border);border-radius:7px;padding:7px 4px;text-align:center}
+.s-tier.hi{background:rgba(127,119,221,.2);border-color:rgba(127,119,221,.4)}
+.s-tier-min{font-size:11px;font-weight:700;color:var(--shield-text)}
+.s-tier-pts{font-size:9.5px;color:var(--shield-muted)}
+
+/* ── DS PAGE ── */
+.ds{max-width:1160px;margin:0 auto}
+.ds-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+.dcard{background:#fff;border-radius:var(--r14);padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:.5px solid rgba(0,0,0,.05)}
+.dcard h3{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--gray-400);margin-bottom:12px}
+.sw-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.sw{width:34px;height:34px;border-radius:7px;border:.5px solid rgba(0,0,0,.07);flex-shrink:0}
+.sw-name{font-size:12px;font-weight:600;color:var(--gray-900)}
+.sw-hex{font-size:10.5px;color:var(--gray-400);font-family:'SF Mono',monospace}
+.sw-role{font-size:10px;color:var(--gray-400);margin-top:1px}
+.ctag{font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px}
+.ctag.e{background:var(--teal-50);color:var(--teal-600)}
+.ctag.s{background:var(--purple-50);color:var(--purple-600)}
+.ts{padding:6px 0;border-bottom:.5px solid var(--gray-100);display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.ts:last-child{border-bottom:none}
+.tm{font-size:10.5px;color:var(--gray-400);text-align:right;flex-shrink:0}
+.rule-row{display:flex;gap:8px;padding:7px 0;border-bottom:.5px solid var(--gray-100);font-size:11.5px}
+.rule-row:last-child{border-bottom:none}
+.rk{font-weight:600;color:var(--gray-900);width:110px;flex-shrink:0}
+.rv{color:var(--gray-600);flex:1;line-height:1.5}
+.rv code{font-family:'SF Mono',monospace;font-size:10px;background:var(--gray-100);padding:1px 4px;border-radius:3px;color:var(--purple-600)}
+.navr{background:var(--gray-50);border-radius:var(--r10);padding:10px 12px;margin-bottom:7px;font-size:11.5px;line-height:1.6;color:var(--gray-600)}
+.navr strong{font-weight:600;color:var(--gray-900)}
+.ab{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:var(--rFull);letter-spacing:.03em;text-transform:uppercase}
+.ab.fixed{background:var(--teal-50);color:var(--teal-600)}
+.ab.new{background:var(--purple-50);color:var(--purple-600)}
+.ab.note{background:var(--amber-50);color:var(--amber-600)}
+.ab.removed{background:var(--red-50);color:var(--red-600)}
+hr.pb{border:none;border-top:1.5px dashed var(--gray-200);margin:44px auto;max-width:1160px}
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="pg-head">
+  <div class="v-badge">v3.0 — MVP Ready</div>
+  <h1>StepLock — Mockups &amp; Design System</h1>
+  <p>Lean 3-screen onboarding · Conversion rate removed for MVP · Typography tightened throughout</p>
+  <div style="display:flex;gap:16px;margin-top:12px;font-size:11.5px;color:var(--gray-600);">
+    <span><span class="owner-dot" style="background:#0C447C;"></span>Arsh — Earning</span>
+    <span><span class="owner-dot" style="background:#854F0B;"></span>JJ — Gating</span>
+    <span><span class="owner-dot" style="background:#534AB7;"></span>Aditya — Spending</span>
+  </div>
+</div>
+
+<!-- ═══════════ ONBOARDING ═══════════ -->
+<div class="sec"><h2>Onboarding — 3 screens</h2><div class="sec-line"></div><span class="sec-owner">Owner: <b>Aditya</b></span></div>
+
+<div class="grid">
+
+  <!-- Onboard 1: The concept -->
+  <div class="pw">
+    <div class="phone">
+      <div class="scr">
+        <div class="sb"><span class="t">9:41</span><div class="sb-icons"><svg width="15" height="11" viewBox="0 0 15 11"><rect x="0" y="3" width="3" height="8" rx="1" fill="#18181640"/><rect x="4" y="1.5" width="3" height="9.5" rx="1" fill="#18181680"/><rect x="8" y="0" width="3" height="11" rx="1" fill="#181816"/><rect x="12" y="0" width="3" height="11" rx="1" fill="#D6D4CE"/></svg></div></div>
+        <div class="ob-dots"><div class="ob-dot on"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+        <div class="body">
+          <div class="ob-hero">
+            <div class="ob-icon" style="background:var(--purple-50);">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                <path d="M13 3L10 12h5l-3 9" stroke="var(--purple-600)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="ob-h">Walk more,<br>scroll less.</div>
+            <div class="ob-sub">StepLock turns your steps into screen time. No steps, no scroll.</div>
+          </div>
+
+          <!-- 3-step flow visual -->
+          <div class="flow">
+            <div class="flow-step">
+              <div class="flow-icon" style="background:var(--teal-50);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M13 3L10 12h5l-3 9" stroke="var(--teal-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="flow-lbl" style="color:var(--teal-600);">Walk<br>steps</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-icon" style="background:var(--purple-50);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="var(--purple-400)"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="var(--purple-400)" stroke-width="2" stroke-linecap="round"/></svg>
+              </div>
+              <div class="flow-lbl" style="color:var(--purple-600);">Earn<br>points</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-icon" style="background:var(--gray-100);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="3" stroke="var(--gray-600)" stroke-width="1.8"/><path d="M9 10h6M9 14h4" stroke="var(--gray-600)" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <div class="flow-lbl">Unlock<br>apps</div>
+            </div>
+          </div>
+
+          <div style="flex:1"></div>
+          <button class="btn purple" style="margin-bottom:7px;">Get started</button>
+          <div style="font-size:10.5px;color:var(--gray-400);text-align:center;padding-bottom:13px;">Requires Screen Time &amp; Health access</div>
+        </div>
+      </div>
+    </div>
+    <div class="plabel"><span class="ab new">REVISED</span><br>1 of 3 — Concept</div>
+  </div>
+
+  <!-- Onboard 2: Permissions (combined) -->
+  <div class="pw">
+    <div class="phone">
+      <div class="scr">
+        <div class="sb"><span class="t">9:41</span></div>
+        <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot on"></div><div class="ob-dot"></div></div>
+        <div class="body" style="padding-top:8px;">
+          <div class="ntitle" style="padding:6px 0 14px;font-size:18px;font-weight:700;letter-spacing:-.3px;">Two permissions,<br>that's it.</div>
+
+          <!-- Health perm card -->
+          <div style="background:var(--teal-50);border-radius:var(--r12);padding:12px 13px;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:7px;">
+              <div style="width:34px;height:34px;border-radius:10px;background:var(--teal-400);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 4 13.5 4 8.5A5.5 5.5 0 0112 4a5.5 5.5 0 018 4.5c0 5-8 12.5-8 12.5z" fill="rgba(255,255,255,.35)" stroke="white" stroke-width="1.8" stroke-linejoin="round"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--teal-900);">Apple Health</div>
+                <div style="font-size:11px;color:var(--teal-600);margin-top:1px;">Step count only</div>
+              </div>
+            </div>
+            <div style="font-size:11.5px;color:var(--teal-600);line-height:1.5;">We read steps — nothing else. No heart rate, sleep, or any other health data.</div>
+          </div>
+
+          <!-- Screen Time perm card -->
+          <div style="background:var(--purple-50);border-radius:var(--r12);padding:12px 13px;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:7px;">
+              <div style="width:34px;height:34px;border-radius:10px;background:var(--purple-600);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" fill="rgba(255,255,255,.25)" stroke="white" stroke-width="1.8"/><path d="M8 11V7a4 4 0 018 0v4" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--purple-900);">Screen Time</div>
+                <div style="font-size:11px;color:var(--purple-600);margin-top:1px;">App blocking via Apple API</div>
+              </div>
+            </div>
+            <div style="font-size:11.5px;color:var(--purple-600);line-height:1.5;">Apple controls all blocking. StepLock only schedules timed windows — no bypasses, ever.</div>
+          </div>
+
+          <div style="flex:1"></div>
+          <button class="btn dark" style="margin-bottom:7px;">Allow both &amp; continue</button>
+          <button class="btn ghost" style="margin-bottom:10px;">Back</button>
+        </div>
+      </div>
+    </div>
+    <div class="plabel"><span class="ab new">REVISED</span><br>2 of 3 — Permissions</div>
+  </div>
+
+  <!-- Onboard 3: Pick apps -->
+  <div class="pw">
+    <div class="phone">
+      <div class="scr">
+        <div class="sb"><span class="t">9:41</span></div>
+        <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot on"></div></div>
+        <div class="body" style="padding-top:8px;">
+          <div style="font-size:18px;font-weight:700;letter-spacing:-.3px;padding:6px 0 6px;line-height:1.2;">Pick the apps<br>you want to gate.</div>
+          <div style="font-size:12.5px;color:var(--gray-400);line-height:1.5;margin-bottom:14px;">You choose. Apple shows the names. StepLock never sees them.</div>
+
+          <!-- System picker placeholder -->
+          <div style="flex:1;background:var(--gray-50);border-radius:var(--r12);border:.5px dashed var(--gray-200);padding:18px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:10px;">
+            <div style="font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--gray-400);margin-bottom:10px;">Apple System Picker</div>
+            <div style="display:flex;gap:8px;margin-bottom:10px;">
+              <div class="tok-chip" style="width:44px;height:44px;border-radius:12px;">
+                <svg width="16" height="16" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="var(--gray-400)" fill-opacity=".3"/></svg>
+              </div>
+              <div class="tok-chip" style="width:44px;height:44px;border-radius:12px;background:var(--purple-50);border-color:var(--purple-100);">
+                <svg width="16" height="16" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="var(--purple-400)" fill-opacity=".4"/></svg>
+              </div>
+              <div class="tok-chip" style="width:44px;height:44px;border-radius:12px;background:var(--teal-50);border-color:var(--teal-100);">
+                <svg width="16" height="16" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="var(--teal-400)" fill-opacity=".4"/></svg>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--gray-400);text-align:center;line-height:1.5;">iOS renders each app's<br>real icon &amp; name here</div>
+          </div>
+
+          <div style="font-size:11px;color:var(--gray-400);text-align:center;margin-bottom:14px;line-height:1.5;">You can add or remove apps any time<br>from Settings</div>
+
+          <button class="btn purple" style="margin-bottom:7px;">Open app picker</button>
+          <button class="btn ghost" style="margin-bottom:10px;">Skip — set up later</button>
+        </div>
+      </div>
+    </div>
+    <div class="plabel"><span class="ab note">JJ's component</span><br>3 of 3 — App selection</div>
+  </div>
+
+</div><!-- /onboarding grid -->
+
+<!-- Conversion rate: removed banner -->
+<div style="max-width:1160px;margin:-32px auto 48px;background:#fff;border-radius:var(--r12);padding:13px 16px;border-left:3px solid var(--red-600);display:flex;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="var(--red-600)" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="var(--red-600)" stroke-width="2" stroke-linecap="round"/></svg>
+  <div>
+    <div style="font-size:12px;font-weight:700;color:var(--red-600);">Conversion Rate screen removed for MVP</div>
+    <div style="font-size:11px;color:var(--gray-600);margin-top:2px;">Rate is fixed at 1 step = 1 point. The Settings screen entry for this is hidden in v1. Future: expose slider in Settings when this feature is re-enabled.</div>
+  </div>
+</div>
+
+
+<!-- ═══════════ MAIN APP ═══════════ -->
+<div class="sec"><h2>Main App — Tab Screens</h2><div class="sec-line"></div></div>
+
+<div class="grid">
+
+  <!-- HOME (Arsh) -->
+  <div class="pw">
+    <div class="phone">
+      <div class="scr">
+        <div class="sb"><span class="t">9:41</span></div>
+        <div class="body">
+          <div class="nlarge">Today</div>
+
+          <div class="ring-wrap">
+            <svg width="144" height="144" viewBox="0 0 144 144">
+              <circle cx="72" cy="72" r="60" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+              <circle cx="72" cy="72" r="60" fill="none" stroke="var(--teal-400)" stroke-width="10" stroke-linecap="round"
+                stroke-dasharray="377" stroke-dashoffset="113" transform="rotate(-90 72 72)"/>
+            </svg>
+            <div class="ring-center">
+              <div class="rval">7,842</div>
+              <div class="runit">of 10,000 steps</div>
+              <div class="rpct">78%</div>
+            </div>
+          </div>
+
+          <div class="stat2">
+            <div class="stile"><div class="stlabel">Points today</div><div class="stval teal">+7,842</div><div class="stsub">1 step = 1 pt</div></div>
+            <div class="stile"><div class="stlabel">Balance</div><div class="stval">14,284</div><div class="stsub">total</div></div>
+          </div>
+
+          <div class="icard purple">
+            <div class="iclabel">Steps to next unlock</div>
+            <div class="icval">2,158 more → afford 15 min</div>
+          </div>
+
+          <button class="btn purple" style="margin-bottom:10px;">Spend points →</button>
+        </div>
+        <div class="tabs">
+          <div class="tab on">
+            <svg width="19" height="19" viewBox="0 0 24 24"><path fill="var(--purple-600)" d="M13.5 5.5C13.5 6.88 12.38 8 11 8S8.5 6.88 8.5 5.5 9.62 3 11 3s2.5 1.12 2.5 2.5zM5 20v-1l4-1.5V14c0-1.1.9-2 2-2h4c.35 0 .68.09.97.24L18 13l.5 1.5L15 13.5V20h-2v-5h-1v5H5z"/></svg>
+            <span class="tlabel" style="color:var(--purple-600);">Today</span>
+          </div>
+          <div class="tab">
+            <svg width="19" height="19" viewBox="0 0 24 24"><path fill="var(--gray-400)" d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66L13 3h1l-1 7h3.5c.49 0 .56.33.47.51L11 21z"/></svg>
+            <span class="tlabel">Spend</span>
+          </div>
+          <div class="tab">
+            <svg width="19" height="19" viewBox="0 0 24 24"><path fill="var(--gray-400)" d="M13 3a9 9 0 010 18A9 9 0 0113 3zm0 2a7 7 0 100 14A7 7 0 0013 5zM4.22 5.64L5.64 4.22l1.41 1.41-1.41 1.42zm16.56 0l-1.42 1.41-1.41-1.41 1.41-1.42zM1 12h2v2H1zm20 0h2v2h-2zM12 18v3h2v-3h-2zm6-1l1.41 1.41 1.42-1.41-1.42-1.42zM4.22 19.78l1.41-1.41 1.42 1.41-1.42 1.42z"/></svg>
+            <span class="tlabel">History</span>
+          </div>
+          <div class="tab">
+            <svg width="19" height="19" viewBox="0 0 24 24"><path fill="var(--gray-400)" d="M12 15.5A3.5 3.5 0 018.5 12 3.5 3.5 0 0112 8.5a3.5 3.5 0 013.5 3.5 3.5 3.5 0 01-3.5 3.5m7.43-2.92c.04-.34.07-.68.07-1.08s-.03-.74-.07-1.08l2.32-1.82c.21-.16.27-.44.15-.68l-2.2-3.8c-.12-.24-.39-.32-.63-.24l-2.74 1.1c-.57-.44-1.18-.8-1.86-1.08l-.42-2.92c-.04-.26-.27-.46-.54-.46H9.5c-.27 0-.5.2-.54.46l-.42 2.92c-.68.28-1.29.64-1.86 1.08l-2.74-1.1c-.24-.08-.51 0-.63.24l-2.2 3.8c-.12.24-.06.52.15.68L3.58 9.42c-.04.34-.08.7-.08 1.08s.04.74.08 1.08L1.26 13.4c-.21.16-.27.44-.15.68l2.2 3.8c.12.24.39.32.63.24l2.74-1.1c.57.44 1.18.8 1.86 1.08l.42 2.92c.04.26.27.46.54.46h4.4c.27 0 .5-.2.54-.46l.42-2.92c.68-.28 1.29-.64 1.86-1.08l2.74 1.1c.24.08.51 0 .63-.24l2.2-3.8c.12-.24.06-.52-.15-.68l-2.32-1.82z"/></svg>
+            <span class="tlabel">Settings</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="plabel"><span class="owner-dot" style="background:#0C447C;"></span>Arsh — Home</div>
+  </div>
+
+  <!-- SPEND (Aditya) -->
+  <div class="pw">
+    <div class="phone">
+      <div class="scr">
+        <div class="sb"><span class="t">9:41</span></div>
+        <div class="body">
+          <div class="nav">
+            <div class="ntitle">Spend points</div>
+            <div class="nbtn"><svg width="11" height="11" viewBox="0 0 12 12"><path d="M1 1l10 10M11 1L1 11" stroke="var(--gray-600)" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+          </div>
+
+          <div style="background:var(--gray-50);border-radius:var(--r10);padding:8px 11px;display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:11.5px;color:var(--gray-600);">Balance</span>
+            <span style="font-size:15px;font-weight:700;color:var(--gray-900);letter-spacing:-.3px;">14,284 pts</span>
+          </div>
+
+          <div class="spend-step">Step 1 — App</div>
+          <div class="app-row sel">
+            <div class="tok-chip" style="background:var(--purple-50);border-color:var(--purple-100);">
+              <svg width="14" height="14" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="var(--purple-400)" fill-opacity=".4"/></svg>
+            </div>
+            <div style="flex:1;"><div class="aname">iOS Label(token:)</div><div class="asub">Rendered by Apple</div></div>
+            <div class="chk"><svg width="9" height="7" viewBox="0 0 9 7"><path d="M1 3.5l2 2L8 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+          </div>
+          <div class="app-row">
+            <div class="tok-chip"><svg width="14" height="14" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="var(--gray-400)" fill-opacity=".25"/></svg></div>
+            <div style="flex:1;"><div class="aname">iOS Label(token:)</div><div class="asub">Rendered by Apple</div></div>
+            <div class="unchk"></div>
+          </div>
+          <div class="app-row">
+            <div class="tok-chip"><svg width="14" height="14" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="var(--gray-400)" fill-opacity=".25"/></svg></div>
+            <div style="flex:1;"><div class="aname">iOS Label(token:)</div><div class="asub">Rendered by Apple</div></div>
+            <div class="unchk"></div>
+          </div>
+
+          <div class="spend-step">Step 2 — Duration</div>
+          <div class="dur-card"><div><div class="dtitle">15 min</div><div class="dhint">Quick check</div></div><div style="text-align:right"><div class="dcost">500 pts</div></div></div>
+          <div class="dur-card sel"><div><div class="dtitle">30 min</div><div class="dhint">Most popular</div></div><div style="text-align:right"><div class="dcost">900 pts</div></div></div>
+          <div class="dur-card locked"><div><div class="dtitle">60 min</div><div class="dhint">Best value</div></div><div style="text-align:right"><div class="dcost">1,600 pts</div><div class="dneed">need 1,600</div></div></div>
+
+          <div class="bal-preview">
+            <span class="bpl">Balance after</span>
+            <span class="bpv">14,284 → 13,384</span>
+          </div>
+          <button class="btn purple" style="margin-bottom:10px;">Unlock 30 min</button>
+        </div>
+      </div>
+    </div>
+    <div class="plabel"><span class="owner-dot" style="background:#534AB7;"></span>Aditya — Spend</div>
+  </div>
+
+  <!-- HISTORY (Arsh) -->
+  <div class="pw">
+    <div class="phone">
+      <div class="scr">
+        <div class="sb"><span class="t">9:41</span></div>
+        <div class="body">
+          <div class="nlarge">History</div>
+
+          <div class="icard teal" style="margin-bottom:6px;">
+            <div class="iclabel">This week</div>
+            <div class="icval">58,420 steps · +58,420 pts</div>
+          </div>
+
+          <div class="slabel">Transactions</div>
+
+          <div class="tx">
+            <div class="txicon earn"><svg width="13" height="13" viewBox="0 0 24 24"><path d="M13 3L10 12h5l-3 9" stroke="var(--teal-600)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            <div class="txmeta"><div class="txtitle">Earned from walking</div><div class="txsub">7,842 steps · Today 9:00 AM</div></div>
+            <div class="txd pos">+7,842</div>
+          </div>
+          <div class="tx">
+            <div class="txicon spend"><svg width="13" height="13" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" stroke="var(--purple-600)" stroke-width="1.8" fill="none"/><path d="M8 11V7a4 4 0 018 0v4" stroke="var(--purple-600)" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></div>
+            <div class="txmeta"><div class="txtitle">Unlock 30 min</div><div class="txsub">iOS Label(token:) · Yesterday 7:32 PM</div></div>
+            <div class="txd neg">−900</div>
+          </div>
+          <div class="tx">
+            <div class="txicon earn"><svg width="13" height="13" viewBox="0 0 24 24"><path d="M13 3L10 12h5l-3 9" stroke="var(--teal-600)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            <div class="txmeta"><div class="txtitle">Earned from walking</div><div class="txsub">8,910 steps · Yesterday</div></div>
+            <div class="txd pos">+8,910</div>
+          </div>
+          <div class="tx">
+            <div class="txicon ref"><svg width="13" height="13" viewBox="0 0 24 24"><path d="M3 10h11a4 4 0 010 8H7M3 10l4-4M3 10l4 4" stroke="var(--amber-600)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            <div class="txmeta"><div class="txtitle">Refund — scheduling failed</div><div class="txsub">Sat 3:14 PM</div></div>
+            <div class="txd rf">+500</div>
+          </div>
+          <div class="tx">
+            <div class="txicon spend"><svg width="13" height="13" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" stroke="var(--purple-600)" stroke-width="1.8" fill="none"/><path d="M8 11V7a4 4 0 018 0v4" stroke="var(--purple-600)" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></div>
+            <div class="txmeta"><div class="txtitle">Unlock 15 min</div><div class="txsub">iOS Label(token:) · Sat 3:12 PM</div></div>
+            <div class="txd neg">−500</div>
+          </div>
+        </div>
+        <div class="tabs">
+          <div class="tab"><svg width="19" height="19" viewBox="0 0 24 24"><path fill="var(--gray-400)" d="M13.5 5.5C13.5 6.88 12.38 8 11 8S8.5 6.88 8.5 5.5 9.62 3 11 3s2.5 1.12 2.5 2.5zM5 20v-1l4-1.5V14c0-1.1.9-2 2-2h4c.35 0 .68.09.97.24L18 13l.5 1.5L15 13.5V20h-2v-5h-1v5H5z"/></svg><span class="tlabel">Today</span></div>
+          <div class="tab"><svg width="19" height="19" viewBox="0 0 24 24"><path fill="var(--gray-400)" d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66L13 3h1l-1 7h3.5c.49 0 .56.33.47.51L11 21z"/></svg><span class="tlabel">Spend</span></div>
+          <div class="tab on"><svg width="19" height="19" viewBox="0 0 24 24"><path fill="var(--purple-600)" d="M13 3a9 9 0 010 18A9 9 0 0113 3zm0 2a7 7 0 100 14A7 7 0 0013 5zM4.22 5.64L5.64 4.22l1.41 1.41-1.41 1.42zm16.56 0l-1.42 1.41-1.41-1.41 1.41-1.42zM1 12h2v2H1zm20 0h2v2h-2zM12 18v3h2v-3h-2zm6-1l1.41 1.41 1.42-1.41-1.42-1.42zM4.22 19.78l1.41-1.41 1.42 1.41-1.42 1.42z"/></svg><span class="tlabel" style="color:var(--purple-600);">History</span></div>
+          <div class="tab"><svg width="19" height="19" viewBox="0 0 24 24"><path fill="var(--gray-400)" d="M12 15.5A3.5 3.5 0 018.5 12 3.5 3.5 0 0112 8.5a3.5 3.5 0 013.5 3.5 3.5 3.5 0 01-3.5 3.5m7.43-2.92c.04-.34.07-.68.07-1.08s-.03-.74-.07-1.08l2.32-1.82c.21-.16.27-.44.15-.68l-2.2-3.8c-.12-.24-.39-.32-.63-.24l-2.74 1.1c-.57-.44-1.18-.8-1.86-1.08l-.42-2.92c-.04-.26-.27-.46-.54-.46H9.5c-.27 0-.5.2-.54.46l-.42 2.92c-.68.28-1.29.64-1.86 1.08l-2.74-1.1c-.24-.08-.51 0-.63.24l-2.2 3.8c-.12.24-.06.52.15.68L3.58 9.42c-.04.34-.08.7-.08 1.08s.04.74.08 1.08L1.26 13.4c-.21.16-.27.44-.15.68l2.2 3.8c.12.24.39.32.63.24l2.74-1.1c.57.44 1.18.8 1.86 1.08l.42 2.92c.04.26.27.46.54.46h4.4c.27 0 .5-.2.54-.46l.42-2.92c.68-.28 1.29-.64 1.86-1.08l2.74 1.1c.24.08.51 0 .63-.24l2.2-3.8c.12-.24.06-.52-.15-.68l-2.32-1.82z"/></svg><span class="tlabel">Settings</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="plabel"><span class="owner-dot" style="background:#0C447C;"></span>Arsh — History</div>
+  </div>
+
+  <!-- SETTINGS (Aditya) -->
+  <div class="pw">
+    <div class="phone">
+      <div class="scr">
+        <div class="sb"><span class="t">9:41</span></div>
+        <div class="body">
+          <div class="nlarge">Settings</div>
+
+          <div class="slabel">Gated apps</div>
+          <div class="sg">
+            <div class="sr"><div><div class="srlabel">Manage gated apps</div><div class="srsub">3 apps selected</div></div><div style="display:flex;align-items:center;gap:5px;"><span class="srval"></span><div class="chev"></div></div></div>
+          </div>
+
+          <div class="slabel">Spending</div>
+          <div class="sg">
+            <div class="sr"><div><div class="srlabel">Daily spend cap</div><div class="srsub">Off</div></div><div class="tog off"><div class="tog-thumb"></div></div></div>
+          </div>
+
+          <div class="slabel">Earning</div>
+          <div class="sg">
+            <div class="sr"><div><div class="srlabel">Daily earn cap</div><div class="srsub">Off</div></div><div class="tog off"><div class="tog-thumb"></div></div></div>
+          </div>
+
+          <div class="slabel">Data</div>
+          <div class="sg">
+            <div class="sr"><div><div class="srlabel" style="color:var(--red-600);">Reset all data</div><div class="srsub">Clears balance, history &amp; unlocks</div></div><div class="chev"></div></div>
+          </div>
+
+          <div style="font-size:10px;color:var(--gray-400);text-align:center;padding:10px 0 4px;">StepLock v1.0 · All data on-device</div>
+        </div>
+        <div class="tabs">
+          <div class="tab"><svg width="19" height="19" viewBox="0 0 24 24"><path fill="var(--gray-400)" d="M13.5 5.5C13.5 6.88 12.38 8 11 8S8.5 6.88 8.5 5.5 9.62 3 11 3s2.5 1.12 2.5 2.5zM5 20v-1l4-1.5V14c0-1.1.9-2 2-2h4c.35 0 .68.09.97.24L18 13l.5 1.5L15 13.5V20h-2v-5h-1v5H5z"/></svg><span class="tlabel">Today</span></div>
+          <div class="tab"><svg width="19" height="19" viewBox="0 0 24 24"><path fill="var(--gray-400)" d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66L13 3h1l-1 7h3.5c.49 0 .56.33.47.51L11 21z"/></svg><span class="tlabel">Spend</span></div>
+          <div class="tab"><svg width="19" height="19" viewBox="0 0 24 24"><path fill="var(--gray-400)" d="M13 3a9 9 0 010 18A9 9 0 0113 3zm0 2a7 7 0 100 14A7 7 0 0013 5zM4.22 5.64L5.64 4.22l1.41 1.41-1.41 1.42zm16.56 0l-1.42 1.41-1.41-1.41 1.41-1.42zM1 12h2v2H1zm20 0h2v2h-2zM12 18v3h2v-3h-2zm6-1l1.41 1.41 1.42-1.41-1.42-1.42zM4.22 19.78l1.41-1.41 1.42 1.41-1.42 1.42z"/></svg><span class="tlabel">History</span></div>
+          <div class="tab on"><svg width="19" height="19" viewBox="0 0 24 24"><path fill="var(--purple-600)" d="M12 15.5A3.5 3.5 0 018.5 12 3.5 3.5 0 0112 8.5a3.5 3.5 0 013.5 3.5 3.5 3.5 0 01-3.5 3.5m7.43-2.92c.04-.34.07-.68.07-1.08s-.03-.74-.07-1.08l2.32-1.82c.21-.16.27-.44.15-.68l-2.2-3.8c-.12-.24-.39-.32-.63-.24l-2.74 1.1c-.57-.44-1.18-.8-1.86-1.08l-.42-2.92c-.04-.26-.27-.46-.54-.46H9.5c-.27 0-.5.2-.54.46l-.42 2.92c-.68.28-1.29.64-1.86 1.08l-2.74-1.1c-.24-.08-.51 0-.63.24l-2.2 3.8c-.12.24-.06.52.15.68L3.58 9.42c-.04.34-.08.7-.08 1.08s.04.74.08 1.08L1.26 13.4c-.21.16-.27.44-.15.68l2.2 3.8c.12.24.39.32.63.24l2.74-1.1c.57.44 1.18.8 1.86 1.08l.42 2.92c.04.26.27.46.54.46h4.4c.27 0 .5-.2.54-.46l.42-2.92c.68-.28 1.29-.64 1.86-1.08l2.74 1.1c.24.08.51 0 .63-.24l2.2-3.8c.12-.24.06-.52-.15-.68l-2.32-1.82z"/></svg><span class="tlabel" style="color:var(--purple-600);">Settings</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="plabel"><span class="owner-dot" style="background:#534AB7;"></span>Aditya — Settings<br><span class="ab removed">No conversion rate row</span></div>
+  </div>
+
+</div><!-- /main grid -->
+
+
+<!-- ═══════════ SHIELD ═══════════ -->
+<div class="sec"><h2>Shield Extension — System Overlay</h2><div class="sec-line"></div><span class="sec-owner">Owner: <b style="color:#854F0B;">JJ</b> · Always dark</span></div>
+
+<div class="grid">
+
+  <!-- Shield: low balance -->
+  <div class="pw">
+    <div class="phone">
+      <div class="scr dark">
+        <div class="sb dk"><span class="t">9:41</span></div>
+        <div class="shield-body">
+          <div class="s-chip">iOS<br>Label<br>(token:)</div>
+          <div class="s-title">This app is gated</div>
+          <div class="s-sub">Walk more to earn points, then spend them for screen time.</div>
+          <div class="s-bal-card">
+            <div><div class="s-bal-label">Balance</div><div class="s-bal-val">142 pts</div></div>
+            <div style="text-align:right;"><div class="s-bal-label">Today's steps</div><div style="font-size:15px;font-weight:700;color:var(--shield-text);margin-top:2px;">142</div></div>
+          </div>
+          <div class="s-prog">
+            <div class="s-prog-labels"><span>To 15 min unlock</span><span>142 / 500</span></div>
+            <div class="s-prog-bar"><div class="s-prog-fill" style="width:28%"></div></div>
+          </div>
+          <button class="s-btn-p">Open StepLock →</button>
+          <button class="s-btn-s">Go back</button>
+          <div style="font-size:10px;color:var(--shield-muted);margin-top:12px;line-height:1.5;">358 more pts needed for 15 min</div>
+        </div>
+      </div>
+    </div>
+    <div class="plabel"><span class="owner-dot" style="background:#854F0B;"></span>JJ — Shield: low balance<br><span class="ab fixed">No direct unlock button</span></div>
+  </div>
+
+  <!-- Shield: has balance -->
+  <div class="pw">
+    <div class="phone">
+      <div class="scr dark">
+        <div class="sb dk"><span class="t">9:41</span></div>
+        <div class="shield-body">
+          <div class="s-chip">iOS<br>Label<br>(token:)</div>
+          <div class="s-title">This app is gated</div>
+          <div class="s-sub">You have enough points to unlock. Open StepLock to spend them.</div>
+          <div class="s-bal-card">
+            <div><div class="s-bal-label">Balance</div><div class="s-bal-val">14,284 pts</div></div>
+            <div style="text-align:right;"><div class="s-bal-label">Today's steps</div><div style="font-size:15px;font-weight:700;color:var(--shield-text);margin-top:2px;">7,842</div></div>
+          </div>
+          <div style="width:100%;margin-bottom:13px;">
+            <div class="s-bal-label" style="margin-bottom:7px;text-align:left;">Can unlock</div>
+            <div class="s-tiers">
+              <div class="s-tier"><div class="s-tier-min">15 min</div><div class="s-tier-pts">500 pts</div></div>
+              <div class="s-tier hi"><div class="s-tier-min">30 min</div><div class="s-tier-pts">900 pts</div></div>
+              <div class="s-tier"><div class="s-tier-min">60 min</div><div class="s-tier-pts">1,600 pts</div></div>
+            </div>
+          </div>
+          <button class="s-btn-p">Open StepLock to spend →</button>
+          <button class="s-btn-s">Go back</button>
+          <div style="font-size:10px;color:var(--shield-muted);margin-top:12px;line-height:1.5;">Transaction happens in StepLock, not here</div>
+        </div>
+      </div>
+    </div>
+    <div class="plabel"><span class="owner-dot" style="background:#854F0B;"></span>JJ — Shield: has balance<br><span class="ab note">Info only · deep link to spend</span></div>
+  </div>
+
+</div><!-- /shield grid -->
+
+<hr class="pb">
+
+<!-- ═══════════ DESIGN SYSTEM ═══════════ -->
+<div class="sec" style="margin-bottom:24px;"><h2>Design System — DesignSystem.swift</h2><div class="sec-line"></div></div>
+
+<div class="ds">
+  <div class="ds-grid">
+
+    <!-- Colors -->
+    <div class="dcard" style="flex:1;min-width:200px;">
+      <h3>Earn — Teal</h3>
+      <div class="sw-row"><div class="sw" style="background:#E1F5EE;"></div><div><div class="sw-name">Teal 50 <span class="ctag e">Earn</span></div><div class="sw-hex">#E1F5EE</div><div class="sw-role">Tag bg, info cards</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#1D9E75;"></div><div><div class="sw-name">Teal 400</div><div class="sw-hex">#1D9E75</div><div class="sw-role">Ring, bar, +delta text</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#0F6E56;"></div><div><div class="sw-name">Teal 600</div><div class="sw-hex">#0F6E56</div><div class="sw-role">Text on teal fills</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#04342C;"></div><div><div class="sw-name">Teal 900</div><div class="sw-hex">#04342C</div><div class="sw-role">Dark text on teal 50</div></div></div>
+    </div>
+
+    <div class="dcard" style="flex:1;min-width:200px;">
+      <h3>Spend — Purple</h3>
+      <div class="sw-row"><div class="sw" style="background:#EEEDFE;"></div><div><div class="sw-name">Purple 50 <span class="ctag s">Spend</span></div><div class="sw-hex">#EEEDFE</div><div class="sw-role">Selected states, info cards</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#CECBF6;"></div><div><div class="sw-name">Purple 100</div><div class="sw-hex">#CECBF6</div><div class="sw-role">Shield primary button bg</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#7F77DD;"></div><div><div class="sw-name">Purple 400</div><div class="sw-hex">#7F77DD</div><div class="sw-role">Selected borders, active tab, dots</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#534AB7;"></div><div><div class="sw-name">Purple 600</div><div class="sw-hex">#534AB7</div><div class="sw-role">CTA buttons · app tintColor</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#26215C;"></div><div><div class="sw-name">Purple 900</div><div class="sw-hex">#26215C</div><div class="sw-role">Shield button label text</div></div></div>
+    </div>
+
+    <div class="dcard" style="flex:1;min-width:200px;">
+      <h3>Neutrals</h3>
+      <div class="sw-row"><div class="sw" style="background:#F5F4F1;"></div><div><div class="sw-name">Gray 50</div><div class="sw-hex">#F5F4F1</div><div class="sw-role">Stat tiles, settings groups</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#D6D4CE;"></div><div><div class="sw-name">Gray 200</div><div class="sw-hex">#D6D4CE</div><div class="sw-role">Borders, dividers</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#9A9892;"></div><div><div class="sw-name">Gray 400</div><div class="sw-hex">#9A9892</div><div class="sw-role">Secondary text, inactive tabs</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#18181680;border:.5px solid #D6D4CE;"></div><div><div class="sw-name">Gray 900</div><div class="sw-hex">#181816</div><div class="sw-role">Primary text, primary btn</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#FCEBEB;"></div><div><div class="sw-name">Red 50 / 600</div><div class="sw-hex">#FCEBEB / #A32D2D</div><div class="sw-role">Errors, destructive</div></div></div>
+    </div>
+
+    <div class="dcard" style="flex:1;min-width:200px;">
+      <h3>Shield (always dark)</h3>
+      <div class="sw-row"><div class="sw" style="background:#0F0E1A;border-color:#333;"></div><div><div class="sw-name">Shield Bg</div><div class="sw-hex">#0F0E1A</div><div class="sw-role">Screen background</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#1A1828;border-color:#333;"></div><div><div class="sw-name">Shield Surface</div><div class="sw-hex">#1A1828</div><div class="sw-role">Cards on shield</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#F0EFFE;"></div><div><div class="sw-name">Shield Text</div><div class="sw-hex">#F0EFFE</div><div class="sw-role">Primary text</div></div></div>
+      <div class="sw-row"><div class="sw" style="background:#9B95D4;"></div><div><div class="sw-name">Shield Muted</div><div class="sw-hex">#9B95D4</div><div class="sw-role">Secondary text</div></div></div>
+      <p style="font-size:10.5px;color:var(--gray-400);margin-top:8px;line-height:1.5;">Shield ignores system appearance — hardcoded dark always, since it runs as a system extension.</p>
+    </div>
+
+  </div>
+
+  <div class="ds-grid">
+
+    <!-- Typography -->
+    <div class="dcard" style="flex:2;min-width:280px;">
+      <h3>Typography — SF Pro Display / SF Pro Text</h3>
+      <div class="ts"><span style="font-size:26px;font-weight:800;letter-spacing:-1px;line-height:1;">14,284</span><span class="tm">26 / 800 — Balance, step count hero</span></div>
+      <div class="ts"><span style="font-size:21px;font-weight:800;letter-spacing:-.5px;line-height:1;">Walk more, scroll less.</span><span class="tm">21 / 800 — Onboarding headline</span></div>
+      <div class="ts"><span style="font-size:18px;font-weight:700;letter-spacing:-.3px;">Pick the apps you want to gate.</span><span class="tm">18 / 700 — Screen headlines</span></div>
+      <div class="ts"><span style="font-size:16px;font-weight:600;letter-spacing:-.2px;">Spend points</span><span class="tm">16 / 600 — Nav title</span></div>
+      <div class="ts"><span style="font-size:13.5px;font-weight:600;">30 min</span><span class="tm">13.5 / 600 — Card titles</span></div>
+      <div class="ts"><span style="font-size:12.5px;font-weight:500;color:var(--gray-600);">Walk to earn points. Spend to unlock.</span><span class="tm">12.5 / 500 — Body text</span></div>
+      <div class="ts"><span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gray-400);">TRANSACTIONS</span><span class="tm">10 / 700 / caps — Section labels</span></div>
+      <div class="ts"><span style="font-size:10.5px;color:var(--gray-400);">Today 9:00 AM · 7,842 steps</span><span class="tm">10.5 / 400 — Timestamps, metadata</span></div>
+    </div>
+
+    <!-- Spacing + Radius -->
+    <div class="dcard" style="flex:1;min-width:200px;">
+      <h3>Radius tokens</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:40px;height:40px;background:var(--gray-100);border-radius:6px;"></div><span style="font-size:9.5px;color:var(--gray-400);">6 — pills</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:40px;height:40px;background:var(--gray-100);border-radius:10px;"></div><span style="font-size:9.5px;color:var(--gray-400);">10 — rows</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:40px;height:40px;background:var(--gray-100);border-radius:12px;"></div><span style="font-size:9.5px;color:var(--gray-400);">12 — cards</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:40px;height:40px;background:var(--gray-100);border-radius:20px;"></div><span style="font-size:9.5px;color:var(--gray-400);">20 — sheets</span></div>
+      </div>
+      <h3>Spacing (px)</h3>
+      <div style="font-size:11px;color:var(--gray-600);line-height:1.9;">
+        xs = 4 · sm = 8 · md = 12<br>
+        lg = 16 · xl = 20 · 2xl = 24<br>
+        Screen edge inset: <strong>15px</strong><br>
+        Card padding: <strong>10–12px v · 12–13px h</strong><br>
+        Section gap: <strong>6px</strong><br>
+        Between sections: <strong>14–16px</strong>
+      </div>
+    </div>
+
+    <!-- Navigation + Rules -->
+    <div class="dcard" style="flex:1.2;min-width:220px;">
+      <h3>Navigation</h3>
+      <div class="navr"><strong>Root:</strong> TabView · 4 tabs · Purple 600 accent</div>
+      <div class="navr"><strong>Spend:</strong> Tab + sheet from Home CTA + steplock://spend deep link → same SpendView</div>
+      <div class="navr"><strong>Onboarding:</strong> NavigationStack presented as .fullScreenCover, 3 screens</div>
+      <div class="navr"><strong>SF Symbols:</strong><br>figure.walk · bolt.circle.fill · clock.arrow.circlepath · gearshape</div>
+    </div>
+
+  </div>
+
+  <div class="ds-grid">
+    <div class="dcard" style="flex:1;min-width:280px;">
+      <h3>Critical implementation rules</h3>
+      <div class="rule-row"><span class="rk">App names</span><span class="rv">Only via <code>Label(token:)</code>. Token chips in mockups are placeholders — never build custom icon rendering.</span></div>
+      <div class="rule-row"><span class="rk">Pricing</span><span class="rv">Read from App Group <code>UserDefaults</code>. Defaults: 500 / 900 / 1,600 pts. Never hardcoded in view layer.</span></div>
+      <div class="rule-row"><span class="rk">Conv. rate</span><span class="rv">Fixed at <code>1 step = 1 pt</code> for MVP. Stored in <code>pointsPerStep</code> UserDefaults. No UI to change it in v1.</span></div>
+      <div class="rule-row"><span class="rk">Shield actions</span><span class="rv">ShieldActionExtension only opens <code>steplock://spend</code>. Zero unlock logic in any extension.</span></div>
+      <div class="rule-row"><span class="rk">Balance reads</span><span class="rv">Always from GRDB <code>PointsBalance</code> row id=1. Never cached in SwiftUI view state.</span></div>
+      <div class="rule-row"><span class="rk">Shield theme</span><span class="rv">Always dark — hardcoded. Ignores system light/dark mode. Self-contained colour set.</span></div>
+      <div class="rule-row"><span class="rk">Touch targets</span><span class="rv">44×44pt minimum (Apple HIG). Extend hit area beyond visual bounds when icon is smaller.</span></div>
+      <div class="rule-row"><span class="rk">Spend confirm</span><span class="rv">Button disabled until app + duration selected AND balance sufficient. Disabled immediately on first tap (prevents double-spend).</span></div>
+    </div>
+  </div>
+
+</div><!-- /ds -->
+
+</body>
+</html>

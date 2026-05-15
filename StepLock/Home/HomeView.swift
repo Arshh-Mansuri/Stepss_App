@@ -60,21 +60,6 @@ struct HomeView: View {
 
                 Spacer(minLength: 16)
 
-                Button {
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                    // Hand-off to Aditya's Spend tab — implemented post-ledger.
-                } label: {
-                    HStack {
-                        Text("Spend points")
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 14, weight: .semibold))
-                    }
-                }
-                .buttonStyle(DSPrimaryButtonStyle())
-                .disabled(true)
-                .opacity(0.6)
-                .padding(.top, 12)
-
                 if let errorText {
                     Text(errorText)
                         .font(.system(size: 12))

@@ -248,6 +248,19 @@ struct SettingsView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+
+            Divider().padding(.leading, 14)
+
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 12))
+                    .foregroundStyle(DS.Color.red600.opacity(0.8))
+                Text("Don't pick StepLock itself in the picker — you'll lock yourself out and need to turn off Screen Time in iOS Settings to recover.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(DS.Color.gray400)
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 14)
         }
         .background(DS.Color.gray50, in: RoundedRectangle(cornerRadius: DS.Radius.r12, style: .continuous))
     }

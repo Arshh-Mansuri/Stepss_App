@@ -19,7 +19,6 @@ struct SpendView: View {
     @State private var selectedTier: PricingEngine.Tier?
     @State private var isSpending = false
     @State private var errorText: String?
-    @State private var now: Date = .now
 
     @Environment(\.scenePhase) private var scenePhase
 
@@ -73,8 +72,7 @@ struct SpendView: View {
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active { reapExpiry() }
             }
-            .onReceive(tickTimer) { date in
-                now = date
+            .onReceive(tickTimer) { _ in
                 if unlockStore.activeSession != nil {
                     reapExpiry()
                 }
@@ -311,7 +309,7 @@ struct SpendView: View {
                 Text("An app is unlocked")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(DS.Color.teal900)
-                Text("Time remaining: \(formatRemaining(max(0, Int(session.expiresAt.timeIntervalSince(now)))))")
+                Text("Time remaining: \(formatRemaining(session.remainingSeconds))")
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(DS.Color.teal600)
                     .contentTransition(.numericText())
@@ -347,40 +345,35 @@ struct SpendView: View {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         isSpending = true
         errorText = nil
-        
-        Task {
-            do {
-                let session: UnlockSession
-                switch target {
-                case .application(let token):
-                    session = try UnlockSession.make(
-                        applicationToken: token,
-                        pointsSpent: tier.pointsCost,
-                        durationMinutes: tier.durationMinutes
-                    )
-                case .category(let token):
-                    session = try UnlockSession.make(
-                        categoryToken: token,
-                        pointsSpent: tier.pointsCost,
-                        durationMinutes: tier.durationMinutes
-                    )
-                }
-                try await SpendingLedger.shared.spend(session: session)
-                try await UnlockScheduler.shared.schedule(session: session)
-                await MainActor.run {
-                    UINotificationFeedbackGenerator().notificationOccurred(.success)
-                    selectedTier = nil
-                    selectedTarget = nil
-                    isSpending = false
-                }
-            } catch {
-                await MainActor.run {
-                    errorText = error.localizedDescription
-                    UINotificationFeedbackGenerator().notificationOccurred(.error)
-                    isSpending = false
-                }
+
+        do {
+            try wallet.debit(points: tier.pointsCost)
+            let session: UnlockSession
+            switch target {
+            case .application(let token):
+                session = try UnlockSession.make(
+                    applicationToken: token,
+                    pointsSpent: tier.pointsCost,
+                    durationMinutes: tier.durationMinutes
+                )
+            case .category(let token):
+                session = try UnlockSession.make(
+                    categoryToken: token,
+                    pointsSpent: tier.pointsCost,
+                    durationMinutes: tier.durationMinutes
+                )
             }
+            unlockStore.start(session)
+            LedgerStore.shared.recordSpend(session: session)
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            selectedTier = nil
+            selectedTarget = nil
+        } catch {
+            errorText = error.localizedDescription
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
         }
+
+        isSpending = false
     }
 
     private func reapExpiry() {
